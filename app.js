@@ -36,5 +36,6 @@ app
     .use(router.allowedMethods());
 
 app.listen(3000, () => {
+  console.log(__dirname);
   console.log("项目启动，开始监听3000端口！");
 });

@@ -1,0 +1,27 @@
+extends ./layout/layout
+
+block side_nav
+  .layui-side.layui-bg-black
+    .layui-side-scroll
+      ul.layui-nav.layui-nav-tree
+        li.layui-nav-item
+          a(href='javascript:;') 所有小说
+          dl.layui-nav-child
+            dd
+              a(href='javascript:;') 新增小说
+        li.layui-nav-item
+          a(href='javascript:;') 所有爬取规则
+          dl.layui-nav-child
+            dd
+              a(href='javascript:;') 添加爬取规则
+
+block body
+  .layui-body
+    div(style='padding: 15px;')
+      
+
+block scripts
+  script.
+    layui.use('element', function(){
+      var element = layui.element;
+    });

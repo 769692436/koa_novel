@@ -1,5 +1,5 @@
 //得到Schema对象
-{ Schema } = require('../database/connect');
+const { Schema } = require('../database/connect');
 
 //声明ObjectId
 const ObjectId = Schema.Types.ObjectId;
@@ -21,7 +21,7 @@ const bookSchema = new Schema({
   versionKey: false,
   timestamps: {
     createdAt: 'createTime',
-    updateAt: 'updateTime'
+    updatedAt: 'updateTime'
   }
 })
 

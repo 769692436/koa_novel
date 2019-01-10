@@ -10,6 +10,6 @@ router.get('/', async (ctx) => {
 
 
 //后台路由
-router.get('/admin/book/:page', book.list);
+router.get('/admin/book', book.list);
 
 module.exports = router;
