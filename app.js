@@ -10,7 +10,7 @@ const router = require('./routers/routes');
 
 const app = new Koa();
 
-app.keys = ['kel_koa_blog'];
+app.keys = ['kel_koa_novel'];
 
 const CONFIG = {
   key: 'sessionId',

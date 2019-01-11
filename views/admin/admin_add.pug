@@ -1,0 +1,41 @@
+extends ./layout/layout
+
+block css
+  link(rel='stylesheet', href='/css/admin.css')
+
+block side_nav
+  .layui-side.layui-bg-black
+    ul.layui-nav.layui-nav-tree(lay-shrink='all')
+      li.layui-nav-item
+        a(href='javascript:;') 管理员管理
+        dl.layui-nav-child
+          dd
+            a(href='javascript:;') 所有管理员
+          dd
+            a(href='javascript:;') 添加管理员
+      li.layui-nav-item
+        a(href='javascript:;') 用户管理
+        dl.layui-nav-child
+          dd
+            a(href='javascript:;') 所有用户
+
+block body
+  .layui-body
+    div(style='padding: 15px;')
+      span.layui-breadcrumb
+        a(href='javascript:;') 管理员管理
+        a(href='javascript:;') 添加管理员
+      .add-block
+        form.layui-form
+          .layui-form-item
+            label.layui-form-label 用户名
+            .layui-input-inline
+              input.layui-input(type='text', name='username', layui-verify='required', reqiured, placeholder='请输入管理员用户名', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 密码
+            .layui-input-inline
+              input.layui-input(type='password', name='password', layui-verify='required', required, placeholder='请输入管理员密码', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 确认密码
+            .layui-input-inline
+              input.layui-input(type='password', name='cpassword', layui-verify='required', required, placeholder='请输入管理员密码', autocomplete='off')
