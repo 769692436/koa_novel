@@ -11,8 +11,8 @@ router.get('/', async (ctx) => {
 
 
 //后台路由
-router.get('/admin/user', admin.list); //所有管理员
-router.get('/admin/user/add', admin.add); //添加管理员
+router.get('/admin/list', admin.list); //所有管理员
+router.get('/admin/add', admin.add); //添加管理员
 router.get('/admin/book', book.list);
 
 module.exports = router;

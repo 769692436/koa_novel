@@ -6,13 +6,13 @@ block css
 block side_nav
   .layui-side.layui-bg-black
     ul.layui-nav.layui-nav-tree(lay-shrink='all')
-      li.layui-nav-item
+      li.layui-nav-item.layui-nav-itemed
         a(href='javascript:;') 管理员管理
         dl.layui-nav-child
           dd
-            a(href='javascript:;') 所有管理员
-          dd
-            a(href='javascript:;') 添加管理员
+            a(href='/admin/list') 所有管理员
+          dd.layui-this
+            a(href='/admin/add') 添加管理员
       li.layui-nav-item
         a(href='javascript:;') 用户管理
         dl.layui-nav-child
@@ -26,16 +26,26 @@ block body
         a(href='javascript:;') 管理员管理
         a(href='javascript:;') 添加管理员
       .add-block
-        form.layui-form
+        form.layui-form.layui-form-pane
           .layui-form-item
             label.layui-form-label 用户名
             .layui-input-inline
-              input.layui-input(type='text', name='username', layui-verify='required', reqiured, placeholder='请输入管理员用户名', autocomplete='off')
+              input.layui-input(type='text', name='username', lay-verify='required', reqiured, placeholder='请输入管理员用户名', autocomplete='off')
           .layui-form-item
             label.layui-form-label 密码
             .layui-input-inline
-              input.layui-input(type='password', name='password', layui-verify='required', required, placeholder='请输入管理员密码', autocomplete='off')
+              input.layui-input(type='password', name='password', lay-verify='required|confirmPWD', required, placeholder='请输入管理员密码', autocomplete='off')
           .layui-form-item
             label.layui-form-label 确认密码
             .layui-input-inline
-              input.layui-input(type='password', name='cpassword', layui-verify='required', required, placeholder='请输入管理员密码', autocomplete='off')
+              input.layui-input(type='password', name='cpassword', lay-verify='required', required, placeholder='请输入管理员密码', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 头像
+            .layui-input-block
+              button.layui-btn#upload-avator(type='button') 上传头像
+          .layui-form-item
+            .layui-input-block
+              button.layui-btn#btn-submit(type='button', lay-submit) 立即提交
+              button.layui-btn.layui-btn-primary(type='reset') 重置
+block scripts
+  script(src='/js/admin_add.js')
