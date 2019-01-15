@@ -5,7 +5,7 @@ const ObjectId = Schema.Types.ObjectId; //声明ObjectId
 const adminSchema = new Schema({
   username: String,
   password: String,
-  avator: String
+  avatar: String
 }, {
   versionKey: false,
   timestamps: {

@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 const Admin = require('../module/adminModel');
-// const crypto = require('../utils/encrypt');
 const dirExists = require('../utils/dirExists');
 const crypto = require('../utils/encrypto');
 
@@ -10,11 +9,70 @@ const crypto = require('../utils/encrypto');
 const rootDir = path.join(__dirname, '../')
 
 exports.index = async (ctx) => {
-  await ctx.render('admin/index.pug');
+  await ctx.render('admin/admin_list');
+}
+/*
+返回状态：
+1.admin_not_exists: 用户不存在
+2.password_err: 密码错误
+3.login_success: 成功登录
+4.login_err: 登录失败
+*/
+exports.login = async (ctx) => {
+  console.log(ctx.request.body);
+  let {username, password} = ctx.request.body;
+  await new Promise((res, rej) => {
+    Admin.find({username}, (err, data) => {
+      if(err) return rej(err);
+      if(data.length === 0){
+        return res(0);
+      }
+      if(data[0].password == crypto(password)){
+        return res(data);
+      }else{
+        return res(1);
+      }
+    })
+  }).then(data => {
+    if(data === 0){
+        ctx.body = {status: 'admin_not_exists'};
+    }else if(data === 1){
+      ctx.body = {status: 'password_err'};
+    }else{
+      ctx.cookies.set('username', username, {
+        domain: 'localhost',
+        path: '/',
+        maxAge: 1000*60*60*8,
+        httpOnly: true,
+        overwrite: false
+      });
+      ctx.cookies.set('userId', data[0]._id, {
+        domain: 'localhost',
+        path: '/',
+        maxAge: 1000*60*60*8,
+        httpOnly: true,
+        overwrite: false
+      });
+      console.log(data[0].avatar,'123');
+      ctx.session = {
+          username,
+          userId: data[0]._id,
+          avatar: data[0].avatar  //取到用户头像
+      };
+      console.log(ctx.session);
+      ctx.body = {status: 'login_success', url: '/admin'};
+    }
+  }, err => {
+    ctx.body = {status: 'login_err'}
+  });
 }
 
 exports.list = async (ctx) => {
-  await ctx.render('admin/admin_list');
+  console.log(ctx.session);
+  await ctx.render('admin/admin_list', {
+    session: ctx.session,
+
+  });
 }
 
 exports.addPage = async (ctx) => {
@@ -46,7 +104,7 @@ exports.add = async (ctx) => {
       status: 'admin_exists'
     }
   }
-  let filePath = path.join(rootDir, 'upload/admin/avator/');
+  let filePath = path.join(rootDir, 'upload/admin/avatar/');
   await dirExists(filePath); //判断是否存在路径，否则创建
   let data = await new Promise((res, rej) => {
     fs.readFile(file.path, (err, data) => {
@@ -78,7 +136,7 @@ exports.add = async (ctx) => {
   const AdminObj = {
     username,
     password: crypto(password),
-    avator: path.join('/upload/admin/avator/', filename)
+    avatar: path.join('/upload/admin/avatar/', filename)
   }
   await new Promise((res, rej) => {
     Admin.create(AdminObj, err => {
@@ -98,4 +156,23 @@ exports.add = async (ctx) => {
       status: err
     }
   });
+}
+
+
+exports.isLogin = async (ctx, next) => {
+  if(ctx.session.isNew){
+    //从未登录过
+    if(ctx.cookies.get('userId')){
+      //cookie有，session 没有
+      //更新一下session
+      ctx.session = {
+        username: ctx.cookies.get('username'),
+        userId: ctx.cookies.get('userId')
+      }
+    }else{
+      return ctx.render('admin/login');
+    }
+  }else{
+    await next();
+  }
 }

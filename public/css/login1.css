@@ -1,0 +1,30 @@
+@charset "UTF-8";
+body{
+  background-image: url('/img/bg.jpg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.login-box{
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border: 1px solid #999;
+  border-radius: 20px;
+  background-color: rgba(255,255,255,.2);
+  box-shadow: 0 5px 100px 5px;
+  color: #fff;
+  margin:auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+.login-box-header{
+  text-align: center;
+  border-bottom: 2px solid #eee;
+}
+.login-box-header h1{
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+}
