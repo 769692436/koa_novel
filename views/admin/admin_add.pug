@@ -42,10 +42,10 @@ block body
           .layui-form-item
             label.layui-form-label 头像
             .layui-input-block
-              button.layui-btn#upload-avator(type='button') 上传头像
+              button.layui-btn#upload-avator(type='button', lay-verify='required') 上传头像
           .layui-form-item
             .layui-input-block
               button.layui-btn#btn-submit(type='button', lay-submit) 立即提交
-              button.layui-btn.layui-btn-primary(type='reset') 重置
+              button.layui-btn.layui-btn-primary#btn-reset(type='reset') 重置
 block scripts
   script(src='/js/admin_add.js')
