@@ -1,5 +1,8 @@
 extends ./layout/layout
 
+block css
+  link(rel='stylesheet', href='/css/admin.css')
+
 block side_nav
   .layui-side.layui-bg-black
     .layui-side-scroll
@@ -19,7 +22,16 @@ block side_nav
 
 block body
   .layui-body
-    div(style='padding: 15px;')
+    div(style='padding: 15px;border-bottom: 1px solid #eee;')
       span.layui-breadcrumb
         a(href='javascript:;') 管理员管理
         a(href='javascript:;') 所有管理员
+    .admin-list
+      table.layui-table#admin-list(lay-filter='admin-list')
+  script#admin-toolbar(type='text/html')
+    .layui-btn-container
+      
+    
+    
+block scripts
+  script(src='/js/admin_list.js')

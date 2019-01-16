@@ -4,3 +4,10 @@
   /* background-color: #f2f2f2; */
   border: 1px solid #eee;
 }
+
+
+/*管理员列表 */
+.admin-list{
+  margin: 20px;
+  border: 1px solid #eee;
+}

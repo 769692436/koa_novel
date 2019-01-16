@@ -1,5 +1,7 @@
 const Book = require('../module/bookModel');
 
 exports.list = async (ctx) => {
-  await ctx.render('admin/book_list', {});
+  await ctx.render('admin/book_list', {
+    session: ctx.session
+  });
 }

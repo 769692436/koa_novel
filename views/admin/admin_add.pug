@@ -21,7 +21,7 @@ block side_nav
 
 block body
   .layui-body
-    div(style='padding: 15px;')
+    div(style='padding: 15px;border-bottom: 1px solid #eee;')
       span.layui-breadcrumb
         a(href='javascript:;') 管理员管理
         a(href='javascript:;') 添加管理员
@@ -42,7 +42,7 @@ block body
           .layui-form-item
             label.layui-form-label 头像
             .layui-input-block
-              button.layui-btn#upload-avator(type='button', lay-verify='required') 上传头像
+              button.layui-btn#upload-avator(type='button', lay-verify='required', required) 上传头像
           .layui-form-item
             .layui-input-block
               button.layui-btn#btn-submit(type='button', lay-submit) 立即提交

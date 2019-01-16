@@ -11,6 +11,7 @@ router.get('/', async (ctx) => {
 
 
 //后台路由 get请求
+router.get('/admin/login', admin.loginPage);
 router.get('/admin', admin.isLogin, admin.index);
 router.get('/admin/list', admin.isLogin, admin.list); //所有管理员
 router.get('/admin/add', admin.isLogin, admin.addPage); //添加管理员

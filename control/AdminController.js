@@ -9,7 +9,14 @@ const crypto = require('../utils/encrypto');
 const rootDir = path.join(__dirname, '../')
 
 exports.index = async (ctx) => {
-  await ctx.render('admin/admin_list');
+  console.log(ctx.session,'654');
+  await ctx.render('admin/admin_list',{
+    session: ctx.session
+  });
+}
+
+exports.loginPage = async (ctx) => {
+  await ctx.render('admin/login');
 }
 /*
 返回状态：
@@ -53,17 +60,24 @@ exports.login = async (ctx) => {
         httpOnly: true,
         overwrite: false
       });
-      console.log(data[0].avatar,'123');
+      ctx.cookies.set('avatar', data[0].avatar, {
+        domain: 'localhost',
+        path: '/',
+        maxAge: 1000*60*60*8,
+        httpOnly: true,
+        overwrite: false
+      });
+      console.log(data[0].avatar.replace('/\\', '/'),'123');
       ctx.session = {
           username,
           userId: data[0]._id,
-          avatar: data[0].avatar  //取到用户头像
+          avatar: data[0].avatar.replace('/\\', '/') || 'upload/'  //取到用户头像
       };
       console.log(ctx.session);
       ctx.body = {status: 'login_success', url: '/admin'};
     }
   }, err => {
-    ctx.body = {status: 'login_err'}
+    if(err) ctx.body = {status: 'login_err'};
   });
 }
 
@@ -76,7 +90,9 @@ exports.list = async (ctx) => {
 }
 
 exports.addPage = async (ctx) => {
-  await ctx.render('admin/admin_add');
+  await ctx.render('admin/admin_add',{
+    session: ctx.session
+  });
 }
 /********
 返回状态：
@@ -104,7 +120,7 @@ exports.add = async (ctx) => {
       status: 'admin_exists'
     }
   }
-  let filePath = path.join(rootDir, 'upload/admin/avatar/');
+  let filePath = path.join(rootDir, 'public/upload/admin/avatar/');
   await dirExists(filePath); //判断是否存在路径，否则创建
   let data = await new Promise((res, rej) => {
     fs.readFile(file.path, (err, data) => {
@@ -138,6 +154,7 @@ exports.add = async (ctx) => {
     password: crypto(password),
     avatar: path.join('/upload/admin/avatar/', filename)
   }
+  console.log(AdminObj.avatar,'321');
   await new Promise((res, rej) => {
     Admin.create(AdminObj, err => {
       if(err){
@@ -152,8 +169,10 @@ exports.add = async (ctx) => {
       url: '/admin/list'
     }
   }, err => {
-    return ctx.body = {
-      status: err
+    if(err){
+      return ctx.body = {
+        status: err
+      }
     }
   });
 }
@@ -167,10 +186,11 @@ exports.isLogin = async (ctx, next) => {
       //更新一下session
       ctx.session = {
         username: ctx.cookies.get('username'),
-        userId: ctx.cookies.get('userId')
+        userId: ctx.cookies.get('userId'),
+        avatar: ctx.cookies.get('avatar')
       }
     }else{
-      return ctx.render('admin/login');
+      return ctx.redirect('/admin/login');
     }
   }else{
     await next();
