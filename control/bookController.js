@@ -1,7 +1,13 @@
 const Book = require('../module/bookModel');
 
-exports.list = async (ctx) => {
+exports.listPage = async (ctx) => {
   await ctx.render('admin/book_list', {
     session: ctx.session
   });
+}
+
+exports.addPage = async (ctx) => {
+  await ctx.render('admin/book_add', {
+    session: ctx.session
+  })
 }
