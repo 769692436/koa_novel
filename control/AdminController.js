@@ -81,12 +81,51 @@ exports.login = async (ctx) => {
   });
 }
 
-exports.list = async (ctx) => {
+exports.listPage = async (ctx) => {
   console.log(ctx.session);
   await ctx.render('admin/admin_list', {
     session: ctx.session,
 
   });
+}
+
+exports.list = async (ctx) => {
+  console.log(ctx.request.query);
+  let { page, limit } = ctx.request.query;
+  page = parseInt(page);
+  limit = parseInt(limit);
+  let count = await Admin.count().then(data => data, err => {
+    if(err) {
+      console.log('获取管理员列表长度发生错误：', err);
+      return ctx.body = {
+        status: 1,
+        msg: '查询管理员列表报错！'
+      }
+    }
+  });
+  console.log('count:' , count);
+  let adminList = await Admin
+      .find()
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .then(data => {
+        return data;
+      }, err => {
+        if(err) {
+          console.log('获取管理员列表发生错误：', err);
+          return ctx.body = {
+            status: 1,
+            msg: '查询管理员列表报错！'
+          }
+        }
+      });
+  console.log(adminList.length);
+  ctx.body = {
+    status: 0,
+    data: adminList,
+    msg: '成功获取管理员列表',
+    count: count
+  }
 }
 
 exports.addPage = async (ctx) => {
@@ -166,7 +205,7 @@ exports.add = async (ctx) => {
   }).then(data => {
     return ctx.body = {
       status: data,
-      url: '/admin/list'
+      url: '/admin/listPage'
     }
   }, err => {
     if(err){
@@ -177,6 +216,20 @@ exports.add = async (ctx) => {
   });
 }
 
+//退出登录
+exports.logout = async (ctx) => {
+  ctx.session = null;
+  ctx.cookies.set('username', null, {
+      maxAge: 0
+  });
+  ctx.cookies.set('userId', null, {
+      maxAge: 0
+  });
+  ctx.cookies.set('avatar', null, {
+    maxAge: 0
+  });
+  ctx.redirect('/admin/login');
+}
 
 exports.isLogin = async (ctx, next) => {
   if(ctx.session.isNew){

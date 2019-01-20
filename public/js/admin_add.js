@@ -37,23 +37,23 @@ layui.use(['form', 'upload'], function(){
       layer.closeAll('loading');
       console.log(res);
       switch (res.status) {
-        case 'admin_exists':
+        case 'admin_exists': {
           layer.msg('用户名已存在');
           $('#btn-reset').click();
-          break;
-        case 'upload_failed':
+        };break;
+        case 'upload_failed': {
           layer.msg('图片上传失败');
-          break;
-        case 'admin_add_failed':
+        };break;
+        case 'admin_add_failed': {
           layer.msg('管理员添加失败');
           $('#reset').click();
-          break;
-        case 'admin_add_success':
+        };break;
+        case 'admin_add_success': {
           layer.msg('成功添加管理员');
           setTimeout(function(){
             location.href = res.url;
           },1500);
-          break;
+        };break;
         default: layer.msg('服务器没有回应');
       }
     }
