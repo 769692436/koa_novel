@@ -1,5 +1,8 @@
 extends ./layout/layout
 
+block css 
+  link(rel='stylesheet', href='/css/admin.css')
+
 block side_nav
   .layui-side.layui-bg-black
     .layui-side-scroll
@@ -30,7 +33,7 @@ block body
           .layui-form-item
             label.layui-form-label 小说名称
             .layui-input-inline
-              input.layui-input(type='text', name='bookname', lay-verify='requied', required, placeholder='请输入小说名称', autocomplete='off')
+              input.layui-input(type='text', name='bookname', lay-verify='required', required, placeholder='请输入小说名称', autocomplete='off')
           .layui-form-item
             label.layui-form-label 作者
             .layui-input-inline
@@ -44,6 +47,21 @@ block body
             .layui-input-block
               input(type='radio', name='state', value='连载中', title='连载中', checked)
               input(type='radio', name='state', value='完本', title='完本')
-
+          .layui-form-item
+            label.layui-form-label 小说分类
+            .layui-input-block
+              input(type='checkbox', name='classification', title='男频')
+              input(type='checkbox', name='classification', title='女频')
+              input(type='checkbox', name='classification', title='通用', checked)
+          .layui-form-item
+            label.layui-form-label 小说封面
+            .layui-input-inline
+              button.layui-btn#upload-cover(type='button', lay-verify='required') 上传封面
+          .layui-form-item
+            .layui-input-block
+              button.layui-btn#btn-submit(type='button', lay-submit) 提交
+              button.layui-btn.layui0-btn-primary(type='reset') 重置
+              
+                
 block scripts
   script(src='/js/book_add.js')    
