@@ -11,3 +11,7 @@ exports.addPage = async (ctx) => {
     session: ctx.session
   })
 }
+
+exports.add = async (ctx) => {
+  console.log(ctx.request.body);
+}
