@@ -19,17 +19,23 @@ html
     
       include footer
       
-    #self-info(style='display: none')
-      form.layui-form
-        .avatar
-          img(src=session.avatar)
-        
+    #admin-baseinfo(style='display: none')
+      form.layui-form.layui-form-pane
+        .layui-upload.avatar
+          .layui-upload-list
+            img.layui-upload-img#avatar(src=session.avatar)
+            p#upload-text
+          button#btn-modify-avatar(type='button') 修改头像 
+        .layui-form-item
+          label.layui-form-label 用户名
+          .layui-input-inline
+            input.layui-input(type='text', name='username', value=session.username)
+        .layui-form-item(style='text-align: center;')
+          button.layui-btn.layui-btn-normal#btn-modify-username(type='button', lay-submit) 修改用户名          
     //- script
-    script.
-      layui.use(['element', 'layer'], function(){
-        var element = layui.element;
-        var layer = layui.layer;
-      });
+    
+    script(src='/js/admin.js')
+      
     
       
     block modal  

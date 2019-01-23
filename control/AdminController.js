@@ -81,6 +81,10 @@ exports.login = async (ctx) => {
   });
 }
 
+exports.baseinfo = async (ctx) => {
+  
+}
+
 exports.listPage = async (ctx) => {
   console.log(ctx.session);
   await ctx.render('admin/admin_list', {

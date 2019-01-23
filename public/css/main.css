@@ -5,3 +5,31 @@ html, body{
   padding: 0;
   font-size: 62.5%;
 }
+
+#admin-baseinfo{
+  padding: 20px;
+}
+
+#admin-baseinfo .avatar{
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 20px auto;
+}
+#admin-baseinfo img{
+  width: 100px;
+  height: 100px;
+}
+#admin-baseinfo .avatar #btn-modify-avatar{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(0,0,0,.3);
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+}

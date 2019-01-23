@@ -21,9 +21,10 @@ router.get('/admin/logout', admin.logout);
 
 //后台路由 异步数据接口
 router.post('/admin/login', admin.login);
+router.get('/admin/get/baseinfo', admin.isLogin, admin.baseinfo);
 router.post('/admin/add', admin.isLogin, admin.add);
 router.get('/admin/list', admin.isLogin, admin.list);
 router.post('/admin/book/add', admin.isLogin, book.add);
-router.get('/admin/book/list', admin.isLogin, book.list); 
+router.get('/admin/book/list', admin.isLogin, book.list);
 
 module.exports = router;
