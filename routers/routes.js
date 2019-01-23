@@ -24,4 +24,6 @@ router.post('/admin/login', admin.login);
 router.post('/admin/add', admin.isLogin, admin.add);
 router.get('/admin/list', admin.isLogin, admin.list);
 router.post('/admin/book/add', admin.isLogin, book.add);
+router.get('/admin/book/list', admin.isLogin, book.list); 
+
 module.exports = router;

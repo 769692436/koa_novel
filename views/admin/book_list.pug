@@ -22,7 +22,18 @@ block side_nav
 block body
   .layui-body
     div(style='padding: 15px;border-bottom: 1px solid #eee;')
-      
-
-
+      span.layui-breadcrumb
+        a(href='javascript:;') 小说管理
+        a(href='javascript:;') 所有小说
+    .book-list
+      table.layui-table#book-list(lay-filter='book-list', lay-skin='line')
+  
+block scripts
+  script#book-list-toolbar(type='text/html')
+    .layui-btn-container
+      a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='detail') 查看
+      a.layui-btn.layui-btn.layui-btn-xs(lay-event='edit') 编辑
+      a.layui-btn.layui-btn-normal.layui-btn-xs(lay-event='catalog') 章节目录
+      a.layui-btn.layui-btn-danger.layui-btn-xs(lay-event='del') 删除
+  script(src='/js/book_list.js')
   

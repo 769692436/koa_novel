@@ -18,9 +18,19 @@ html
       
     
       include footer
+      
+    #self-info(style='display: none')
+      form.layui-form
+        .avatar
+          img(src=session.avatar)
+        
     //- script
     script.
-      layui.use('element', function(){
+      layui.use(['element', 'layer'], function(){
         var element = layui.element;
+        var layer = layui.layer;
       });
+    
+      
+    block modal  
     block scripts

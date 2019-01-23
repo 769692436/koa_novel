@@ -6,7 +6,7 @@ const dirExists = require('../utils/dirExists');
 const crypto = require('../utils/encrypto');
 
 
-const rootDir = path.join(__dirname, '../')
+const rootDir = path.join(__dirname, '../');
 
 exports.index = async (ctx) => {
   console.log(ctx.session,'654');
@@ -146,7 +146,7 @@ exports.add = async (ctx) => {
 
   let isExists = await new Promise((res, rej) => {
     Admin.find({username}, (err, data) => {
-      if(err) return rej(err);
+      if(err) return rej(true);
       if(data.length !== 0){
         return res(true);
       }else{
