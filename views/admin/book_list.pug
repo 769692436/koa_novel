@@ -27,7 +27,11 @@ block body
         a(href='javascript:;') 所有小说
     .book-list
       table.layui-table#book-list(lay-filter='book-list', lay-skin='line')
-  
+
+block modal
+  #modal-book-detail(style='display: none;')
+    
+
 block scripts
   script#book-list-toolbar(type='text/html')
     .layui-btn-container

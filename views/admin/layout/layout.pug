@@ -31,7 +31,7 @@ html
           .layui-input-inline
             input.layui-input(type='text', name='username', value=session.username)
         .layui-form-item(style='text-align: center;')
-          button.layui-btn.layui-btn-normal#btn-modify-username(type='button', lay-submit) 修改用户名          
+          button.layui-btn.layui-btn-normal#btn-modify-username(type='button', lay-submit, lay-filter='uname') 修改用户名          
     //- script
     
     script(src='/js/admin.js')

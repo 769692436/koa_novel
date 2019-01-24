@@ -82,7 +82,7 @@ exports.login = async (ctx) => {
 }
 
 exports.baseinfo = async (ctx) => {
-  
+
 }
 
 exports.listPage = async (ctx) => {
@@ -197,7 +197,6 @@ exports.add = async (ctx) => {
     password: crypto(password),
     avatar: path.join('/upload/admin/avatar/', filename)
   }
-  console.log(AdminObj.avatar,'321');
   await new Promise((res, rej) => {
     Admin.create(AdminObj, err => {
       if(err){
@@ -218,6 +217,110 @@ exports.add = async (ctx) => {
       }
     }
   });
+}
+
+exports.avatarModify = async (ctx) => {
+  let file = ctx.request.files.file,
+      {oPath, username} = ctx.request.body;
+  console.log(ctx.request.body);
+  let filePath = path.join(rootDir, 'public/upload/admin/avatar/');
+  await dirExists(filePath); //判断是否存在路径，否则创建
+  let data = await new Promise((res, rej) => {
+    fs.readFile(file.path, (err, data) => {
+      if(err) return rej('');
+      return res(data);
+    });
+  });
+  if(!data){
+    return ctx.body = {
+      status: 1, //无法读取上传头像
+    }
+  }
+  let ext = file.name.split('.').pop();
+  let filename = ctx.request.body.username + (new Date()).getTime() + '.' + ext;
+  let fileDir = path.join(filePath , filename);
+  console.log(fileDir);
+  let uploadStatus = await new Promise((res, rej) => {
+    fs.writeFile(fileDir, data, err => {
+      if(err) return rej(false);
+      return res(true);
+    })
+  });
+  if(!uploadStatus){
+    return ctx.body = {
+      status: 2 //无法保存更新头像
+    }
+  }
+  fs.unlink(path.join('public', oPath), err => {
+    if(err){
+      console.log(err);
+    }
+  });
+  await new Promise((res, rej) => {
+    Admin.findOneAndUpdate({username}, {avatar: path.join('/upload/admin/avatar/', filename)}, err => {
+      if(err) return rej(false);
+      return res(true);
+    });
+  }).then(data => {
+    ctx.session.avatar = path.join('/upload/admin/avatar/', filename);
+    return ctx.body = {
+      status: 0
+    }
+  }, err => {
+    return ctx.body = {
+      status: 3 //更新avatar路径失败
+    }
+  });
+}
+
+/*
+*修改管理员名称或密码
+@type: 0->名称， 1->密码
+@userType: 0->自己 1->其他
+#status: 0/成功 1/失败
+*/
+exports.modify = async (ctx) => {
+  switch (parseInt(ctx.request.body.type)) {
+    case 0: {
+      let oUsername = ctx.session.username;
+      if(parseInt(ctx.request.body.userType) === 1) {
+        oUsername = ctx.request.body.oUsername;
+      }
+      let {username} = ctx.request.body;
+
+      await Admin.findOneAndUpdate({username: oUsername}, {username}, err => {
+        if(err){
+          return ctx.body = {
+            status: 1
+          }
+        }else{
+          ctx.session.username = username;
+          return ctx.body = {
+            status: 0
+          }
+        }
+      });
+    }
+      break;
+    case 1: {
+      let {username, password} = ctx.request.body;
+      if(parseInt(ctx.request.body.userType) === 0){
+        username = ctx.session.username;
+      }
+      await Admin.findOneAndUpdate({username}, {password}, err => {
+        if(err){
+          return ctx.body = {
+            status: 1
+          }
+        }else{
+          return ctx.body = {
+            status: 0
+          }
+        }
+      })
+    }
+      break;
+  }
 }
 
 //退出登录
