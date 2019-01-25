@@ -3,7 +3,7 @@ const router = new Router;
 
 const book = require('../control/bookController');
 const admin = require('../control/adminController');
-
+const rule = require('../control/ruleController');
 
 router.get('/', async (ctx) => {
   await ctx.render('index',{});

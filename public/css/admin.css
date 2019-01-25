@@ -11,3 +11,11 @@
   margin: 20px;
   border: 1px solid #eee;
 }
+
+
+#rule-add-block .layui-form-pane .layui-form-label{
+  width: 200px;
+}
+#rule-add-block .layui-form-pane .layui-input-block{
+  margin-left: 200px;
+}

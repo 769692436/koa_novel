@@ -12,7 +12,7 @@ block side_nav
           dl.layui-nav-child
             dd
               a(href='/admin/book/listPage') 所有小说
-            dd.layui-this
+            dd
               a(href='/admin/book/addPage') 新增小说
         li.layui-nav-item.layui-nav-itemed
           a(href='javascript:;') 爬取规则管理
@@ -20,7 +20,7 @@ block side_nav
             dd
               a(href='javascript:;') 所有爬取规则
             dd.layui-this
-              a(href='javascript:;') 添加爬取规则
+              a(href='/admin/book/rule/addPage') 添加爬取规则
 
 block body
   .layui-body
@@ -29,10 +29,39 @@ block body
         a(href='javascript:;') 小说管理
         a(href='javascript:;') 爬取规则管理
         a(href='javascript:;') 添加爬取规则
-      .add-block
+      .add-block#rule-add-block
         form.layui-form.layui-form-pane
           .layui-form-item
             label.layui-form-label 对应小说名称
-            .layui-input-inline
-              select(lay-verify='required', lay-search, name='name')
-                
+            .layui-input-block
+              select#book-select(lay-verify='required', required, lay-search, name='name', lay-filter='bookname')
+                each book in bookList
+                  option(value=book.bookId)=book.name
+          .layui-form-item
+            label.layui-form-label 爬取目标网址
+            .layui-input-block
+              input.layui-input(type='text', name='targetUrl', lay-verify='required', placeholder='请输入要爬取小说对应的页面网址', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 目录页章节类选择器
+            .layui-input-block
+              input.layui-input(type='text', name='listSign', lay-verify='required', placeholder='请输入要爬取小说目录页章节类选择器', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 内容页链接所在标签属性
+            .layui-input-block
+              input.layui-input(type='text', name='inWhatAtrr', lay-verify='required', placeholder='请输入要爬取小说目录页中对应内容页链接所在标签属性', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 内容页章节内容选择器
+            .layui-input-block
+              input.layui-input(type='text', name='contentSign', lay-verify='required', placeholder='请输入内容页章节内容选择器', autocomplete='off')
+          .layui-form-item
+            label.layui-form-label 内容页章节标题选择器
+            .layui-input-block
+              input.layui-input(type='text', name='titleSign', lay-verify='required', placeholder='请输入内容页章节标题选择器', autocomplete='off')
+          .layui-form-item
+            .layui-input-block
+              button.layui-btn#btn-submit(type='button', lay-submit) 确定
+              button.layui-btn.layui-btn-primary#btn-reset(type='reset') 重置
+
+
+block scripts
+  script(src='/js/rule_add.js')
