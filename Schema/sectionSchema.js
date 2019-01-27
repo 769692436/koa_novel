@@ -1,14 +1,10 @@
 const {Schema} = require('../database/connect');
-
 const ObjectId = Schema.Types.ObjectId;
 
-const ruleSchema = new Schema({
-  bookName: String,
-  targetUrl: String,
-  listSign: String,
-  inWhatAtrr: String,
-  contentSign: String,
-  titleSign: String,
+let sectionSchema = new Schema({
+  sectionNum: Number,
+  title: String,
+  content: String,
   book: {
     type: ObjectId,
     ref: 'books'
@@ -21,4 +17,4 @@ const ruleSchema = new Schema({
   }
 });
 
-module.exports = ruleSchema;
+module.exports = sectionSchema;

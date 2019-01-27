@@ -22,25 +22,27 @@ exports.list = async (ctx) => {
   page = parseInt(page);
   limit = parseInt(limit);
   let count = await Book.count().then(data => data, err => {
-    if(err){
-      console.log('获取小说列表长度报错: ', err);
-      return ctx.body = {
-        status: 1,
-        msg: '无法获取小说列表'
-      }
-    }
+    return 0;
   });
+  if(!count){
+    return ctx.body = {
+      status: 1,
+      msg: '暂无数据'
+    }
+  }
   let bookList = await Book
       .find()
       .skip((page - 1) * limit)
       .limit(limit)
       .then(data => data, err => {
-        console.log('获取小说列表发生错误：', err);
-        return ctx.body = {
-          status: 1,
-          msg: '无法获取小说列表'
-        }
+        return [];
       });
+  if(bookList.length === 0){
+    return ctx.body = {
+      status: 1,
+      msg: '无法获取数据'
+    }
+  }
    return ctx.body = {
      status: 0,
      data: bookList,

@@ -1,43 +1,41 @@
 extends ./layout/layout
 
+block css 
+  link(rel='stylesheet', href='/css/admin.css')
+  
 block side_nav
   .layui-side.layui-bg-black
     .layui-side-scroll
       ul.layui-nav.layui-nav-tree(lay-shrink='all')
-        li.layui-nav-item.layui-nav-itemed
+        li.layui-nav-item
           a(href='javascript:;') 小说管理
           dl.layui-nav-child
-            dd.layui-this
+            dd
               a(href='/admin/book/listPage') 所有小说
             dd
               a(href='/admin/book/addPage') 新增小说
-        li.layui-nav-item
+        li.layui-nav-item.layui-nav-itemed
           a(href='javascript:;') 爬取规则管理
           dl.layui-nav-child
-            dd
+            dd.layui-this
               a(href='/admin/book/rule/listPage') 所有爬取规则
             dd
               a(href='/admin/book/rule/addPage') 添加爬取规则
-
 block body
   .layui-body
     div(style='padding: 15px;border-bottom: 1px solid #eee;')
       span.layui-breadcrumb
         a(href='javascript:;') 小说管理
-        a(href='javascript:;') 所有小说
-    .book-list
-      table.layui-table#book-list(lay-filter='book-list', lay-skin='line')
-
-block modal
-  #modal-book-detail(style='display: none;')
-    
-
+        a(href='javascript:;') 爬取规则管理
+        a(href='javascript:;') 所有爬取规则
+      #rule-list-block
+        table.layui-table#rule-list(lay-filter='rule-list', lay-skin='line')
+        
 block scripts
-  script#book-list-toolbar(type='text/html')
+  script#rule-list-toolbar(type='text/html')
     .layui-btn-container
       a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='detail') 查看
       a.layui-btn.layui-btn-xs(lay-event='edit') 编辑
-      a.layui-btn.layui-btn-normal.layui-btn-xs(lay-event='catalog') 章节目录
-      a.layui-btn.layui-btn-danger.layui-btn-xs(lay-event='del') 删除
-  script(src='/js/book_list.js')
-  
+      a.layui-btn.layui-btn-xs.layui-btn-danger(lay-event='del') 删除
+      a.layui-btn.layui-btn-xs.layui-btn-normal(lay-event='crawl') 爬取
+  script(src='/js/rule_list.js')

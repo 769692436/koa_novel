@@ -19,9 +19,9 @@ router.get('/admin/book/listPage', admin.isLogin, book.listPage);
 router.get('/admin/book/addPage', admin.isLogin, book.addPage);
 router.get('/admin/logout', admin.logout);
 router.get('/admin/book/rule/addPage', admin.isLogin, rule.addPage);
+router.get('/admin/book/rule/listPage', admin.isLogin, rule.listPage);
 
 //后台路由 异步数据接口
-
 //管理员相关
 router.post('/admin/login', admin.login);
 router.get('/admin/baseinfo/get', admin.isLogin, admin.baseinfo);
@@ -29,9 +29,11 @@ router.post('/admin/add', admin.isLogin, admin.add);
 router.get('/admin/list', admin.isLogin, admin.list);
 router.post('/admin/modify', admin.isLogin, admin.modify);
 router.post('/admin/avatar/modify', admin.isLogin, admin.avatarModify);
-
 //小说相关
 router.post('/admin/book/add', admin.isLogin, book.add);
 router.get('/admin/book/list', admin.isLogin, book.list);
-
+//爬取规则相关
+router.post('/admin/book/rule/add', admin.isLogin, rule.add);
+router.get('/admin/book/rule/list', admin.isLogin, rule.list);
+router.post('/admin/book/rule/crawl', admin.isLogin, rule.crawl);
 module.exports = router;

@@ -1,6 +1,5 @@
 layui.use('table', function(){
   var table = layui.table;
-  console.log(123);
   table.render({
     elem: '#book-list',
     url: '/admin/book/list',
@@ -8,9 +7,9 @@ layui.use('table', function(){
     skin: 'line',
     cols: [[
       {type: 'checkbox'},
-      {field: 'bookId', title: 'ID'},
+      {field: 'bookId', title: 'ID', width: 50},
       {field: 'name', title: '书名'},
-      {field: 'author', title: '作者'},
+      {field: 'author', title: '作者', width: 100},
       {field: 'state', title: '连载状态'},
       {field: 'currentLength', title: '最新章节数'},
       {title: '操作', toolbar: '#book-list-toolbar'}
