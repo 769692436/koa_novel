@@ -137,7 +137,7 @@ let saveSection = async (sectionData, book) => {
     book: book
   }
   let isExists = await Section
-        .find({sectionNum: sectionNum})
+        .find({$and:[{sectionNum: sectionNum}, {book:book}]})
         .then(data => {
           if(data.length !== 0){
             return true;
