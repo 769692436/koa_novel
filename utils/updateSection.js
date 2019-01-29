@@ -24,9 +24,9 @@ let updateSection = async (rule) => {
   let ruleObj = await Rule.find({_id: rule._id}).populate('book').exec();
   let currentLen = ruleObj[0].book.currentLength;
   let updateSectionList = await getUpdateSectionList(ruleObj[0], currentLen);
+  console.log('总共可更新数量', updateSectionList.length);
   if(updateSectionList.length > 0){
     let sectionList = await getEachSection(ruleObj[0], updateSectionList);
-    console.log(updateSectionList);
     let saveSectionStatusLlist = await getSaveSectionStatus(sectionList, ruleObj[0].book._id);
     return saveSectionStatusLlist;
   }else{//不存在可更新章节
@@ -43,30 +43,33 @@ let getUpdateSectionList = (rule, currentLen) => {
         .charset('gbk')
         .end((err, response) => {
           if(err){
-            console.log(err);
-            return ;
-          }
-          let $ = cheerio.load(response.text);
-          let reg = new RegExp('.*章');
-          let flag = reg.exec($(rule.listSign).last().text().split(' '));
-          let latestSecNum = getSectionNum(flag[0]);
-          console.log(latestSecNum);
-          if(latestSecNum < currentLen){
+            console.log(err,'请求报错');
             res([]);
           }else{
-            console.log(currentLen);
-            $(rule.listSign).slice(currentLen + 6).each((i, v) => {
-              let sectionNum = getSectionNum(($(v).text().split(' '))[0]);
-              if(sectionNum > currentLen){
-                let tempData = {
-                  url: myUrl.resolve(rule.targetUrl, $(v).attr(rule.inWhatAtrr)),
-                  sectionNum: sectionNum
+            let $ = cheerio.load(response.text);
+            let reg = new RegExp(rule.sectionNumReg);
+            let flag = reg.exec($(rule.listSign).last().text());
+            let latestSecNum = getSectionNum(flag[0]);
+            console.log('最新章节：', latestSecNum, $(rule.listSign).last().text(), currentLen, flag);
+            if(latestSecNum < currentLen){
+              res([]);
+            }else{
+              $(rule.listSign).slice(currentLen + 6).each((i, v) => {//需要清除相同的章节链接？
+                let flag = reg.exec($(v).text());
+                if(!!flag){
+                  let sectionNum = getSectionNum(flag[0]);
+                  if(sectionNum > currentLen){
+                    let tempData = {
+                      url: myUrl.resolve(rule.targetUrl, $(v).attr(rule.inWhatAtrr)),
+                      sectionNum: sectionNum
+                    }
+                    sectionList.push(tempData);
+                  }
                 }
-                sectionList.push(tempData);
-              }
-            });
+              });
+            }
+            res(sectionList);
           }
-          res(sectionList);
         });
   });
 }
@@ -95,31 +98,41 @@ let getSectionData = (rule, index, ele) => {
       .charset('gbk')
       .retry(3)
       .end((err, res) => {
-        console.log(res.statusCode);
-        if(res.statusCode == 200 || res.statusCode == 304){
-          let $ = cheerio.load(res.text);
-          let title = $(rule.titleSign).text();
-          let content = $(rule.contentSign).text();
-          let saveData = {
-            sectionNum: ele.sectionNum,
-            title: title,
-            content: content
-          }
-          ep.emit('getSection', saveData)
-        }else{
+        if(err){
+          console.log('无法访问该章节网址');
           let saveData = {
             sectionNum: ele.sectionNum,
             title: '空缺',
             content: '正在手打中！'
           }
           ep.emit('getSection', saveData);
+        }else{
+          if(res.statusCode == 200 || res.statusCode == 304){
+            let $ = cheerio.load(res.text);
+            let title = $(rule.titleSign).text();
+            let content = $(rule.contentSign).text();
+            let saveData = {
+              sectionNum: ele.sectionNum,
+              title: title,
+              content: content
+            }
+            ep.emit('getSection', saveData)
+          }else{
+            console.log(res.statusCode,'请求返回不正确');
+            let saveData = {
+              sectionNum: ele.sectionNum,
+              title: '空缺',
+              content: '正在手打中！'
+            }
+            ep.emit('getSection', saveData);
+          }
         }
       });
 }
 
 let getSaveSectionStatus = (sectionList, book) => {
   return new Promise((res, rej) => {
-    ep.after('saveScetion', sectionList.length, data => {
+    ep.after('saveSection', sectionList.length, data => {
       res(data);
     });
     sectionList.forEach((v, i) => {
@@ -147,9 +160,10 @@ let saveSection = async (sectionData, book) => {
         }, err => {
           return false;
         });
-  console.log(isExists);
+
   if(isExists){
-    ep.emit('saveScetion', {
+    console.log(sectionNum,'章已存在！');
+    ep.emit('saveSection', {
       status: 1,
       sectionNum: sectionNum,
       msg: '第'+ sectionNum +'章已存在'
@@ -157,10 +171,11 @@ let saveSection = async (sectionData, book) => {
   }else{
     Section.create(saveData, err => {
       if(err){
-        ep.emit('saveScetion', {
+        console.log('保存第' + sectionNum + '章失败');
+        ep.emit('saveSection', {
           status: 2,
           sectionNum: sectionNum,
-          msg: '保存第' +sectionNum + '失败',
+          msg: '保存第' +sectionNum + '章失败',
         });
       }else{
         ep.emit('saveScetion', {

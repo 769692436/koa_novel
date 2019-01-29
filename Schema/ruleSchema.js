@@ -6,6 +6,7 @@ const ruleSchema = new Schema({
   bookName: String,
   targetUrl: String,
   listSign: String,
+  sectionNumReg: String,
   inWhatAtrr: String,
   contentSign: String,
   titleSign: String,

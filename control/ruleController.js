@@ -13,11 +13,12 @@ exports.addPage = async (ctx) => {
 }
 
 exports.add = async (ctx) => {
-  let {book, targetUrl, listSign, inWhatAtrr, contentSign, titleSign} = ctx.request.body;
+  let {book, targetUrl, listSign, inWhatAtrr, contentSign, titleSign, sectionNumReg} = ctx.request.body;
   let ruleObj = {
     book,
     targetUrl,
     listSign,
+    sectionNumReg,
     inWhatAtrr,
     contentSign,
     titleSign
@@ -94,7 +95,7 @@ exports.crawl = async (ctx) => {
   let saveSectionStatusLlist = await updateSection(rule);
   let updateCount = 0;
   let resData = [];
-  console.log(saveSectionStatusLlist);
+  console.log(saveSectionStatusLlist.last());
   if(saveSectionStatusLlist.length <= 0){
     return ctx.body = {
       status: 2,
