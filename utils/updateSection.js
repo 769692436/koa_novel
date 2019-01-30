@@ -24,9 +24,9 @@ let updateSection = async (rule) => {
   let ruleObj = await Rule.find({_id: rule._id}).populate('book').exec();
   let currentLen = ruleObj[0].book.currentLength;
   let updateSectionList = await getUpdateSectionList(ruleObj[0], currentLen);
-  console.log('总共可更新数量', updateSectionList.length);
-  if(updateSectionList.length > 0){
-    let sectionList = await getEachSection(ruleObj[0], updateSectionList);
+  console.log('总共可更新数量', Object.values(updateSectionList).length);
+  if(Object.values(updateSectionList).length > 0){
+    let sectionList = await getEachSection(ruleObj[0], Object.values(updateSectionList));
     let saveSectionStatusLlist = await getSaveSectionStatus(sectionList, ruleObj[0].book._id);
     return saveSectionStatusLlist;
   }else{//不存在可更新章节
@@ -36,7 +36,8 @@ let updateSection = async (rule) => {
 
 let getUpdateSectionList = (rule, currentLen) => {
   return new Promise((res, rej) => {
-    let sectionList = [];
+    let tSectionList = [];
+    let sectionList = {};
     request
         .get(rule.targetUrl)
         .buffer(true)
@@ -54,7 +55,7 @@ let getUpdateSectionList = (rule, currentLen) => {
             if(latestSecNum < currentLen){
               res([]);
             }else{
-              $(rule.listSign).slice(currentLen + 6).each((i, v) => {//需要清除相同的章节链接？
+              $(rule.listSign).slice(currentLen).each((i, v) => {//需要清除相同的章节链接？
                 let flag = reg.exec($(v).text());
                 if(!!flag){
                   let sectionNum = getSectionNum(flag[0]);
@@ -63,11 +64,13 @@ let getUpdateSectionList = (rule, currentLen) => {
                       url: myUrl.resolve(rule.targetUrl, $(v).attr(rule.inWhatAtrr)),
                       sectionNum: sectionNum
                     }
-                    sectionList.push(tempData);
+                    tSectionList.push(tempData);
                   }
                 }
               });
+              tSectionList.forEach(item => (sectionList[item.sectionNum] = item));
             }
+            console.log(tSectionList.length, Object.values(sectionList).length);
             res(sectionList);
           }
         });
@@ -80,6 +83,7 @@ let getEachSection = (rule, list) => {
       console.log('所有更新章节请求完毕！');
       res(data);
     });
+    console.log(list[0],'test');
     list.forEach((v, i) => {
       getSectionData(rule, i, v);
     });
@@ -93,13 +97,13 @@ let getSectionData = (rule, index, ele) => {
   agent
       .get(ele.url)
       // .proxy() // 代理ip
-      .set({'User-Agent': userAgent})
+      // .set({'User-Agent': userAgent})
       .buffer(true)
       .charset('gbk')
-      .retry(3)
+      // .retry(3)
       .end((err, res) => {
         if(err){
-          console.log('无法访问该章节网址');
+          console.log('无法访问该章节网址', err);
           let saveData = {
             sectionNum: ele.sectionNum,
             title: '空缺',
@@ -166,7 +170,7 @@ let saveSection = async (sectionData, book) => {
     ep.emit('saveSection', {
       status: 1,
       sectionNum: sectionNum,
-      msg: '第'+ sectionNum +'章已存在'
+      msg: '第' + sectionNum + '章已存在'
     });
   }else{
     Section.create(saveData, err => {
@@ -175,13 +179,13 @@ let saveSection = async (sectionData, book) => {
         ep.emit('saveSection', {
           status: 2,
           sectionNum: sectionNum,
-          msg: '保存第' +sectionNum + '章失败',
+          msg: '保存第' + sectionNum + '章失败',
         });
       }else{
         ep.emit('saveScetion', {
           status: 0,
           sectionNum: sectionNum,
-          msg: '成功爬取保存第' +sectionNum + '章',
+          msg: '成功爬取保存第' + sectionNum + '章',
         });
       }
     })

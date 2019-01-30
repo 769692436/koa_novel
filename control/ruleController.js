@@ -95,13 +95,14 @@ exports.crawl = async (ctx) => {
   let saveSectionStatusLlist = await updateSection(rule);
   let updateCount = 0;
   let resData = [];
-  console.log(saveSectionStatusLlist.last());
   if(saveSectionStatusLlist.length <= 0){
     return ctx.body = {
       status: 2,
       msg: '目标网址没有可更新章节'
     }
   }
+  console.log(saveSectionStatusLlist[saveSectionStatusLlist.length-1]);
+
   for(let i = 0; i < saveSectionStatusLlist.length; i++){
     if(saveSectionStatusLlist[i].status > 0){
       continue;
@@ -113,7 +114,7 @@ exports.crawl = async (ctx) => {
       });
     }
   }
-  console.log(updateCount);
+  console.log(updateCount,'updateCount');
   await Book.updateOne({_id: ctx.request.body.book._id}, {$inc: {currentLength: updateCount/2}}, (err, raw) => {
     console.log(err, raw);
   });
