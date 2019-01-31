@@ -101,7 +101,7 @@ exports.crawl = async (ctx) => {
       msg: '目标网址没有可更新章节'
     }
   }
-  console.log(saveSectionStatusLlist[saveSectionStatusLlist.length-1]);
+  console.log(saveSectionStatusLlist[saveSectionStatusLlist.length-1], '21312313213132112312');
 
   for(let i = 0; i < saveSectionStatusLlist.length; i++){
     if(saveSectionStatusLlist[i].status > 0){
@@ -129,5 +129,4 @@ exports.crawl = async (ctx) => {
       msg: '没有更新'
     }
   }
-
 }

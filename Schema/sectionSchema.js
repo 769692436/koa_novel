@@ -8,7 +8,9 @@ let sectionSchema = new Schema({
   book: {
     type: ObjectId,
     ref: 'books'
-  }
+  },
+  status: Number,
+  originUrl: String
 },{
   versionKey: false,
   timestamps: {
