@@ -92,25 +92,23 @@ exports.list = async (ctx) => {
 
 exports.crawl = async (ctx) => {
   let rule = ctx.request.body;
-  let saveSectionStatusLlist = await updateSection(rule);
+  let updateSectionData = await updateSection(rule);
   let updateCount = 0;
   let resData = [];
-  if(saveSectionStatusLlist.length <= 0){
+  if(updateSectionData.saveSectionStatusList.length <= 0){
     return ctx.body = {
       status: 2,
       msg: '目标网址没有可更新章节'
     }
   }
-  console.log(saveSectionStatusLlist[saveSectionStatusLlist.length-1], '21312313213132112312');
-
-  for(let i = 0; i < saveSectionStatusLlist.length; i++){
-    if(saveSectionStatusLlist[i].status > 0){
+  for(let i = 0; i < updateSectionData.saveSectionStatusList.length; i++){
+    if(updateSectionData.saveSectionStatusList[i].status > 0){
       continue;
     }else{
       updateCount++;
       resData.push({
-        sectionNum: saveSectionStatusLlist[i].sectionNum,
-        msg: '成功爬取第' + saveSectionStatusLlist[i].sectionNum + '章'
+        sectionNum: updateSectionData.saveSectionStatusList[i].sectionNum,
+        msg: '成功爬取第' + updateSectionData.saveSectionStatusList[i].sectionNum + '章'
       });
     }
   }

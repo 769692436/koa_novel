@@ -26,11 +26,11 @@ let updateSection = async (rule) => {
   let updateSectionList = await getUpdateSectionList(ruleObj[0], currentLen);
   console.log('总共可更新数量', updateSectionList.sectionList.length);
   if(updateSectionList.sectionList.length > 0){
-    let sectionList = await getEachSection(ruleObj[0], updateSectionList.sectionList);
-    let saveSectionStatusLlist = await getSaveSectionStatus(sectionList, ruleObj[0].book._id);
+    let sectionList = await getEachSection(ruleObj[0], updateSectionList.sectionList.slice(0, 3));//获取3章内容
+    let saveSectionStatusList = await getSaveSectionStatus(sectionList, ruleObj[0].book._id);
     return {
-      saveSectionStatusLlist: saveSectionStatusLlist,
-      latestSecNum: updateSectionList.latestSecNum
+      saveSectionStatusList: saveSectionStatusList,
+      latestSecNum: ruleObj[0].book.currentLength + 3
     }
   }else{//不存在可更新章节
     return [];
@@ -129,11 +129,12 @@ let getSectionData = (rule, index, ele) => {
   let proxyIP = proxyIPs[parseInt(Math.random() * proxyIPs.length)];
   agent
       .get(ele.url)
-      // .proxy() // 代理ip
+      .proxy() // 代理ip
       .set({'User-Agent': userAgent})
+      .set('Cookie', ServerCookie)
       .buffer(true)
       .charset('gbk')
-      // .retry(3)
+      .retry(3)
       .end((err, res) => {
         if(err){
           console.log('无法访问该章节网址', err);
@@ -176,6 +177,7 @@ let getSectionData = (rule, index, ele) => {
 let getSaveSectionStatus = (sectionList, book) => {
   return new Promise((res, rej) => {
     ep.after('saveSection', sectionList.length, data => {
+      console.log(data);
       res(data);
     });
     sectionList.forEach((v, i) => {
@@ -223,7 +225,7 @@ let saveSection = async (sectionData, book) => {
           msg: '保存第' + sectionNum + '章失败',
         });
       }else{
-        ep.emit('saveScetion', {
+        ep.emit('saveSection', {
           status: 0,
           sectionNum: sectionNum,
           msg: '成功爬取保存第' + sectionNum + '章',
