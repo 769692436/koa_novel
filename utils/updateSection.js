@@ -26,14 +26,17 @@ let updateSection = async (rule) => {
   let updateSectionList = await getUpdateSectionList(ruleObj[0], currentLen);
   console.log('总共可更新数量', updateSectionList.sectionList.length);
   if(updateSectionList.sectionList.length > 0){
-    let sectionList = await getEachSection(ruleObj[0], updateSectionList.sectionList.slice(0, 3));//获取3章内容
+    let sectionList = await getEachSection(ruleObj[0], updateSectionList.sectionList.slice(0, 1));//获取3章内容
     let saveSectionStatusList = await getSaveSectionStatus(sectionList, ruleObj[0].book._id);
     return {
       saveSectionStatusList: saveSectionStatusList,
       latestSecNum: ruleObj[0].book.currentLength + 3
     }
   }else{//不存在可更新章节
-    return [];
+    return {
+      saveSectionStatusList: [],
+      latestSecNum: ruleObj[0].book.currentLength
+    };
   }
 }
 
@@ -44,7 +47,7 @@ let getUpdateSectionList = (rule, currentLen) => {
     request
         .get(rule.targetUrl)
         .buffer(true)
-        .charset('gbk')
+        .charset(rule.charset)
         .end((err, response) => {
           if(err){
             console.log(err,'请求报错');
@@ -57,6 +60,7 @@ let getUpdateSectionList = (rule, currentLen) => {
             //获取最新章节数
             let reg = new RegExp(rule.sectionNumReg);
             let flag = reg.exec($(rule.listSign).last().text());
+            console.log(flag,'flag',$(rule.listSign).last().text());
             let latestSecNum = getSectionNum(flag[0]);//最新章节数
 
             if(latestSecNum < currentLen){
@@ -86,10 +90,9 @@ let getUpdateSectionList = (rule, currentLen) => {
                 return a.sectionNum - b.sectionNum;
               });//将map对象转成数组,并升序排序
               let sectionListLen = sectionList.length;
-              let j = 1;
+              let j = currentLen;
               for(let i = 0; i < sectionListLen; i++){//查缺
                   if(parseInt(sectionList[i].sectionNum) != j){
-                    console.log(sectionList[i].sectionNum, j, i);
                     sectionList.push({
                       url: '',
                       sectionNum: j
@@ -127,21 +130,30 @@ let getSectionData = (rule, index, ele) => {
   const agent = request.agent();
   let userAgent = userAgents[parseInt(Math.random() * userAgents.length)];
   let proxyIP = proxyIPs[parseInt(Math.random() * proxyIPs.length)];
+  if(ele.url == ''){
+    let saveData = {
+      sectionNum: ele.sectionNum,
+      title: '空缺',
+      content: '正在手打中！',
+      status: 2,
+      originUrl: ele.url
+    }
+    return ep.emit('getSection', saveData);
+  }
   agent
       .get(ele.url)
       .proxy() // 代理ip
       .set({'User-Agent': userAgent})
-      .set('Cookie', ServerCookie)
       .buffer(true)
-      .charset('gbk')
+      .charset(rule.charset)
       .retry(3)
       .end((err, res) => {
         if(err){
           console.log('无法访问该章节网址', err);
           let saveData = {
             sectionNum: ele.sectionNum,
-            title: '空缺',
-            content: '正在手打中！',
+            title: '请求失败！',
+            content: '请求失败！',
             status: 0,
             originUrl: ele.url
           }
@@ -163,9 +175,9 @@ let getSectionData = (rule, index, ele) => {
             console.log(res.statusCode,'请求返回不正确');
             let saveData = {
               sectionNum: ele.sectionNum,
-              title: '空缺',
-              content: '正在手打中！',
-              status: 2,
+              title: '请求失败！',
+              content: '请求失败！',
+              status: 0,
               originUrl: ele.url
             }
             ep.emit('getSection', saveData);
@@ -188,50 +200,58 @@ let getSaveSectionStatus = (sectionList, book) => {
 
 let saveSection = async (sectionData, book) => {
   let sectionNum = sectionData.sectionNum;
-  let saveData = {
-    sectionNum: sectionNum,
-    title: sectionData.title,
-    content: sectionData.content,
-    book: book,
-    status: sectionData.status,
-    originUrl: sectionData.originUrl
-  }
-  let isExists = await Section
-        .find({$and:[{sectionNum: sectionNum}, {book:book}]})
-        .then(data => {
-          if(data.length !== 0){
-            return true;
-          }else{
-            return false;
-          }
-        }, err => {
-          return false;
-        });
-
-  if(isExists){
-    console.log(sectionNum,'章已存在！');
-    ep.emit('saveSection', {
-      status: 1,
+  if(sectionData.status != 0){
+    let saveData = {
       sectionNum: sectionNum,
-      msg: '第' + sectionNum + '章已存在'
-    });
+      title: sectionData.title,
+      content: sectionData.content,
+      book: book,
+      status: sectionData.status,
+      originUrl: sectionData.originUrl
+    }
+    let isExists = await Section
+          .find({$and:[{sectionNum: sectionNum}, {book:book}]})
+          .then(data => {
+            if(data.length !== 0){
+              return true;
+            }else{
+              return false;
+            }
+          }, err => {
+            return false;
+          });
+
+    if(isExists){
+      console.log(sectionNum,'章已存在！');
+      ep.emit('saveSection', {
+        status: 0,
+        sectionNum: sectionNum,
+        msg: '第' + sectionNum + '章已存在'
+      });
+    }else{
+      Section.create(saveData, err => {
+        if(err){
+          console.log('保存第' + sectionNum + '章失败');
+          ep.emit('saveSection', {
+            status: 2,
+            sectionNum: sectionNum,
+            msg: '保存第' + sectionNum + '章失败',
+          });
+        }else{
+          ep.emit('saveSection', {
+            status: 1,
+            sectionNum: sectionNum,
+            msg: '成功爬取保存第' + sectionNum + '章',
+          });
+        }
+      })
+    }
   }else{
-    Section.create(saveData, err => {
-      if(err){
-        console.log('保存第' + sectionNum + '章失败');
-        ep.emit('saveSection', {
-          status: 2,
-          sectionNum: sectionNum,
-          msg: '保存第' + sectionNum + '章失败',
-        });
-      }else{
-        ep.emit('saveSection', {
-          status: 0,
-          sectionNum: sectionNum,
-          msg: '成功爬取保存第' + sectionNum + '章',
-        });
-      }
-    })
+    ep.emit('saveSection', {
+      status: 2,
+      sectionNum: sectionNum,
+      msg: '保存第' + sectionNum + '章失败',
+    });
   }
 }
 

@@ -42,6 +42,10 @@ block body
             .layui-input-block
               input.layui-input(type='text', name='targetUrl', lay-verify='required', placeholder='请输入要爬取小说对应的页面网址', autocomplete='off')
           .layui-form-item
+            label.layui-form-label 目标网址页面编码
+            .layui-input-block
+              input.layui-input(type='text', name='charset', lay-verify='required', placeholder='请输入要爬取小说目标网址页面编码', autocomplete='off')
+          .layui-form-item
             label.layui-form-label 目录页章节类选择器
             .layui-input-block
               input.layui-input(type='text', name='listSign', lay-verify='required', placeholder='请输入要爬取小说目录页章节类选择器', autocomplete='off')

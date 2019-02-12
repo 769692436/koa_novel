@@ -13,7 +13,7 @@ exports.addPage = async (ctx) => {
 }
 
 exports.add = async (ctx) => {
-  let {book, targetUrl, listSign, inWhatAtrr, contentSign, titleSign, sectionNumReg} = ctx.request.body;
+  let {book, targetUrl, listSign, inWhatAtrr, contentSign, titleSign, sectionNumReg, charset} = ctx.request.body;
   let ruleObj = {
     book,
     targetUrl,
@@ -21,7 +21,8 @@ exports.add = async (ctx) => {
     sectionNumReg,
     inWhatAtrr,
     contentSign,
-    titleSign
+    titleSign,
+    charset
   }
   console.log(ctx.request.body);
   await new Promise((res, rej) => {
@@ -39,6 +40,42 @@ exports.add = async (ctx) => {
   }, err => {
     return ctx.body = {
       status: err
+    }
+  });
+}
+
+exports.del = async (ctx) => {
+  let rule = ctx.request.body;
+  await Rule.deleteOne({_id: rule._id}, err => {
+    if(err){
+      console.log(err);
+      ctx.body = {
+        status: 1,
+        msg: '删除失败！'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '删除成功！'
+      }
+    }
+  });
+}
+
+exports.modify = async (ctx) => {
+  let rule = ctx.request.body;
+  console.log(rule);
+  await Rule.updateOne({_id: rule._id}, rule, err => {
+    if(err){
+      ctx.body = {
+        status: 1,
+        msg: '修改失败！'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '修改成功!'
+      }
     }
   });
 }
@@ -81,7 +118,6 @@ exports.list = async (ctx) => {
       msg: '无法获取列表数据'
     }
   }
-  console.log(ruleList);
   return ctx.body = {
     status: 0,
     data: ruleList,
@@ -102,7 +138,7 @@ exports.crawl = async (ctx) => {
     }
   }
   for(let i = 0; i < updateSectionData.saveSectionStatusList.length; i++){
-    if(updateSectionData.saveSectionStatusList[i].status > 0){
+    if(updateSectionData.saveSectionStatusList[i].status !== 1){
       continue;
     }else{
       updateCount++;

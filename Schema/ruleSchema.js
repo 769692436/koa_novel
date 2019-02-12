@@ -10,6 +10,7 @@ const ruleSchema = new Schema({
   inWhatAtrr: String,
   contentSign: String,
   titleSign: String,
+  charset: String,
   book: {
     type: ObjectId,
     ref: 'books'

@@ -32,11 +32,13 @@ html
             input.layui-input(type='text', name='username', value=session.username)
         .layui-form-item(style='text-align: center;')
           button.layui-btn.layui-btn-normal#btn-modify-username(type='button', lay-submit, lay-filter='uname') 修改用户名          
-    //- script
     
+    //- 弹出层
+    block modal  
+
+    //- script
     script(src='/js/admin.js')
       
     
       
-    block modal  
     block scripts

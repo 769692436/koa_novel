@@ -30,12 +30,52 @@ block body
         a(href='javascript:;') 所有爬取规则
       #rule-list-block
         table.layui-table#rule-list(lay-filter='rule-list', lay-skin='line')
-        
+
+block modal
+  #modal-rule-detail(style='display: none;')
+    .info-box 
+      form.layui-form.layui-form-pane 
+        input(type='text', name='_id', readonly, hidden, autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 对应小说名称
+          .layui-input-block
+            input.layui-input(type='text', name='bookname', lay-verify='required', readonly, autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 爬取目标网址
+          .layui-input-block
+            input.layui-input(type='text', name='targetUrl', lay-verify='required', placeholder='请输入要爬取小说对应的页面网址', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 目标网址页面编码
+          .layui-input-block
+            input.layui-input(type='text', name='charset', lay-verify='required', placeholder='请输入要爬取小说目标网址页面编码', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 目录页章节类选择器
+          .layui-input-block
+            input.layui-input(type='text', name='listSign', lay-verify='required', placeholder='请输入要爬取小说目录页章节类选择器', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 目录页章节数值正则
+          .layui-input-block
+            input.layui-input(type='text', name='sectionNumReg', lay-verify='required', placeholder='请输入要爬取小说目录页章节数值正则', autocomplete='off')    
+        .layui-form-item
+          label.layui-form-label 内容页链接所在标签属性
+          .layui-input-block
+            input.layui-input(type='text', name='inWhatAtrr', lay-verify='required', placeholder='请输入要爬取小说目录页中对应内容页链接所在标签属性', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 内容页章节内容选择器
+          .layui-input-block
+            input.layui-input(type='text', name='contentSign', lay-verify='required', placeholder='请输入内容页章节内容选择器', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 内容页章节标题选择器
+          .layui-input-block
+            input.layui-input(type='text', name='titleSign', lay-verify='required', placeholder='请输入内容页章节标题选择器', autocomplete='off')
+        .layui-form-item
+          .layui-input-block
+            button.layui-btn#btn-rule-modify(type='button', lay-submit) 修改
+            
 block scripts
   script#rule-list-toolbar(type='text/html')
     .layui-btn-container
       a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='detail') 查看
-      a.layui-btn.layui-btn-xs(lay-event='edit') 编辑
       a.layui-btn.layui-btn-xs.layui-btn-danger(lay-event='del') 删除
       a.layui-btn.layui-btn-xs.layui-btn-normal(lay-event='crawl') 爬取
   script(src='/js/rule_list.js')

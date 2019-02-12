@@ -34,6 +34,8 @@ router.post('/admin/book/add', admin.isLogin, book.add);
 router.get('/admin/book/list', admin.isLogin, book.list);
 //爬取规则相关
 router.post('/admin/book/rule/add', admin.isLogin, rule.add);
+router.post('/admin/book/rule/del', admin.isLogin, rule.del);
+router.post('/admin/book/rule/modify', admin.isLogin, rule.modify);
 router.get('/admin/book/rule/list', admin.isLogin, rule.list);
 router.post('/admin/book/rule/crawl', admin.isLogin, rule.crawl);
 module.exports = router;
