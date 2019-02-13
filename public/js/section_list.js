@@ -1,5 +1,6 @@
 layui.use(['table'], function(){
-  var table = layui.table;
+  var table = layui.table,
+      $ = layui.$;
   var book_id = location.href.split('/').pop();
   console.log(book_id);
   var tableInst = table.render({
@@ -27,6 +28,34 @@ layui.use(['table'], function(){
         'data': res.data
       }
     }
-  });
+  });//tableInst end
+  //监听工具条事件
+  table.on('tool(section-list)', function(obj) {
+    var layEvent = obj.event;
+    if(layEvent === 'modify') {
 
+    }else if(layEvent === 'del') {
+      del($, obj.data);
+    }
+  });
 });
+
+function del($, data) {
+  $.ajax({
+    url: '/admin/book/section/del',
+    type: 'post',
+    data: data,
+    beforeSend: function(xhr) {
+      layer.load();
+    },
+    success: function(res) {
+      layer.msg(res.msg);
+      setTimeout(function(){
+        location.reload();
+      }, 2000)
+    },
+    error: function(err) {
+      layer.msg('删除失败!');
+    }
+  })
+}

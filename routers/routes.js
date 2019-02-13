@@ -45,4 +45,5 @@ router.get('/admin/book/rule/list', admin.isLogin, rule.list);
 router.post('/admin/book/rule/crawl', admin.isLogin, rule.crawl);
 //小说章节相关
 router.get('/admin/book/section/list/:id', admin.isLogin, section.list);
+router.post('/admin/book/section/del', admin.isLogin, section.del);
 module.exports = router;

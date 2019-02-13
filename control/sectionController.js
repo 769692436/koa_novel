@@ -52,3 +52,21 @@ exports.list = async (ctx) => {
     count: count
   }
 }
+
+exports.del = async (ctx) => {
+  let _id = ctx.request.body._id;
+  await Section.deleteOne({_id: _id}, err => {
+    if(err) {
+      console.log(err);
+      ctx.body = {
+        status: 1,
+        msg: '删除失败!'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '删除成功!'
+      }
+    }
+  });
+}
