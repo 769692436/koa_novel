@@ -239,7 +239,6 @@ exports.avatarModify = async (ctx) => {
   let ext = file.name.split('.').pop();
   let filename = ctx.request.body.username + (new Date()).getTime() + '.' + ext;
   let fileDir = path.join(filePath , filename);
-  console.log(fileDir);
   let uploadStatus = await new Promise((res, rej) => {
     fs.writeFile(fileDir, data, err => {
       if(err) return rej(false);

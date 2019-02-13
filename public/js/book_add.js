@@ -19,7 +19,7 @@ layui.use(['form', 'upload'], function(){
         return $('[name="description"]').val();
       },
       state: function(){
-        return $('[name="state"]').val();
+        return $('[name="state"]:checked').val();
       },
       classification: function(){
         var temp  = [];

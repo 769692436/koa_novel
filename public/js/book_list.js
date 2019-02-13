@@ -1,5 +1,8 @@
-layui.use('table', function(){
-  var table = layui.table;
+layui.use(['table', 'form', 'upload'], function(){
+  var table = layui.table,
+      $ = layui.$,
+      form = layui.form,
+      upload = layui.upload;
   table.render({
     elem: '#book-list',
     url: '/admin/book/list',
@@ -7,6 +10,10 @@ layui.use('table', function(){
     skin: 'line',
     cols: [[
       {type: 'checkbox'},
+      {field: '_id', hide: 'true'},
+      {field: 'cover', hide: 'true'},
+      {field: 'description', hide: 'true'},
+      {field: 'classification', hide: 'true'},
       {field: 'bookId', title: 'ID', width: 50},
       {field: 'name', title: '书名'},
       {field: 'author', title: '作者', width: 100},
@@ -23,4 +30,161 @@ layui.use('table', function(){
       }
     }
   });
+  table.on('tool(book-list)', function(obj) {
+    var layEvent = obj.event;
+    console.log(layEvent);
+    switch(layEvent){
+      case 'modify': modify($, form, obj.data); break;
+      case 'catalog': {
+        location.href= '/admin/book/section/listPage/' + obj.data._id;
+      }; break;
+      case 'del': del($, obj.data); break;
+    }
+  });
+
+  function del($, data) {
+    $.ajax({
+      url: '/admin/book/del',
+      type: 'post',
+      data: data,
+      beforeSend: function(xhr) {
+        layer.load();
+      },
+      success: function(res){
+        layer.msg(res.msg);
+        setTimeout(function(){
+          location.reload();
+        }, 2000);
+      },
+      error: function(err) {
+        console.log(err);
+        layer.msg('删除失败!');
+        setTimeout(function(){
+          location.reload();
+        }, 2000);
+      }
+    })
+  }
+
+  function modify($, form, data) {
+    layer.open({
+      type: 1,
+      title: '小说基本信息',
+      area: '600px',
+      content: $('#modal-book-detail'),
+      btn: ['取消'],
+      btn1: function(index, layero) {
+        layer.close(index);
+      },
+      success: function(layero, index) {
+        var name = layero.find('[name=name]'),
+            author = layero.find('[name=author]'),
+            classification = layero.find('[name="classification[]"]'),
+            description = layero.find('[name=description]'),
+            state = layero.find('[name=state][value='+ data.state +']'),
+            cover = layero.find('#cover'),
+            mIndex = index;
+        cover.attr('src',  data.cover);
+        name.val(data.name);
+        author.val(data.author);
+        description.val(data.description);
+        state.prop('checked', true);
+        data.classification.forEach(function(i) {
+          console.log(classification);
+          classification.each(function(index, v){
+            console.log(v.value);
+            if(v.value == i){
+              v.checked = true;
+            }
+          });
+        });
+        form.render();//更新表单
+        //小说封面修改
+        var uploadInst = upload.render({
+          elem: '#btn-modify-cover',
+          url: '/admin/book/cover/modify',
+          data: {
+            oPath: data.cover,
+            _id: data._id,
+            name: data.name
+          },
+          before: function(obj) {
+            obj.preview(function(index, file, res) {
+              $('#cover').attr('src', res);
+            });
+          },
+          done: function(res) {
+            if(res.status == 0){
+              layer.msg(res.msg);
+              setTimeout(function(){
+                location.reload();
+              }, 2000)
+            }else{
+              var uploadText = $('#modal-book-detail #upload-text');
+              uploadText.html(`<span style='color: #ff5722;'>上传失败</span><a class='layui-btn layui-btn-xs cover-reload'>重试</a>`);
+              uploadText.find('.cover-reload').on('click', function(){
+                uploadInst.upload();
+              });
+            }
+          },
+          error: function(err) {
+            var uploadText = $('#modal-book-detail #upload-text');
+            uploadText.html(`<span style='color: #ff5722;'>上传失败</span><a class='layui-btn layui-btn-xs cover-reload'>重试</a>`);
+            uploadText.find('.cover-reload').on('click', function(){
+              uploadInst.upload();
+            });
+          }
+        });//小说封面修改end
+        //小说基本信息修改
+
+        $('#btn-book-modify').on('click', function() {
+          var classificationNew = [];
+          $('[name="classification[]"]:checked').each(function(i, v){
+            classificationNew.push(v.value);
+          });
+          layer.confirm('确认修改?', function(index) {
+            console.log($('[name=state]:checked').val());
+            var updateData = {
+              _id: data._id,
+              name: name.val(),
+              author: author.val(),
+              description: description.val(),
+              state: $('[name=state]:checked').val(),
+              classification: classificationNew
+            }
+            $.ajax({
+              url: '/admin/book/modify',
+              type: 'post',
+              data: updateData,
+              beforeSend: function(xhr) {
+                layer.load();
+              },
+              success: function(res) {
+                if(res.status == 0) {
+                  layer.closeAll('loading');
+                  layer.msg(res.msg);
+                  setTimeout(function(){
+                    location.reload();
+                  }, 1500);
+                }else{
+                  layer.closeAll('loading');
+                  layer.msg(res.msg);
+                  setTimeout(function(){
+                    location.reload();
+                  }, 1500);
+                }
+              },
+              error: function(err) {
+                layer.msg('修改失败!');
+                setTimeout(function(){
+                  location.reload();
+                }, 2000);
+              }
+            });//$.ajax end
+            layer.close(index);
+          });
+        });//小说基本信息修改end
+      }
+    });
+  }
 });

@@ -17,7 +17,7 @@ exports.listPage = async (ctx) => {
 }
 
 exports.list = async (ctx) => {
-  console.log(ctx.request.query,"123");
+  // console.log(ctx.request.query,"123");
   let {page, limit} = ctx.request.query;
   page = parseInt(page);
   limit = parseInt(limit);
@@ -129,7 +129,7 @@ exports.add = async (ctx) => {
     state,
     currentLength: 0,
     bookId: bookId || 0,
-    cover: path.join('upload/cover/', coverName),
+    cover: path.join('/upload/cover/', coverName),
   }
   await new Promise((res, rej) => {
     Book.create(BookObj, err => {
@@ -148,6 +148,88 @@ exports.add = async (ctx) => {
   }, err => {
     return ctx.body = {
       status: err
+    }
+  })
+}
+
+exports.coverModify = async (ctx) => {
+  let file = ctx.request.files.file,
+      {oPath, _id, name} = ctx.request.body;
+  let filePath = path.join(rootDir, 'public/upload/cover/');
+  await dirExists(filePath);
+  let data = await new Promise((res, rej) => {
+    fs.readFile(file.path, (err, data) => {
+      if(err) return rej('');
+      return res(data);
+    });
+  });
+  if(!data){
+    return ctx.body = {
+      status: 1,
+      msg: '小说封面修改失败!'
+    }
+  }
+  let ext = file.name.split('.').pop();
+  let filename = name + '.' + ext;
+  let fileDir = path.join(filePath, filename);
+  let uploadStatus = await new Promise((res, rej) => {
+    fs.writeFile(fileDir, data, err => {
+      if(err) return rej(false);
+      return res(true);
+    });
+  });
+  // console.log(uploadStatus);
+  if(!uploadStatus){
+    return ctx.body = {
+      status: 2,
+      msg: '修改失败!'
+    }
+  }
+  await Book.findOneAndUpdate({_id}, {cover: path.join('/upload/cover/', filename)}, err => {
+    if(err) {
+      ctx.body = {
+        status: 3,
+        msg: '修改失败!'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '修改成功!'
+      }
+    }
+  })
+}
+
+exports.modify = async (ctx) => {
+  let {_id, name, author, description, state, classification} = ctx.request.body;
+  await Book.findOneAndUpdate({ _id }, {name, author, description, state, classification}, err => {
+    if(err) {
+      ctx.body = {
+        status: 1,
+        msg: '修改失败!'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '修改成功!'
+      }
+    }
+  });
+}
+
+exports.del = async (ctx) => {
+  let {_id} = ctx.request.body;
+  await Book.deleteOne({_id}, err => {
+    if(err){
+      ctx.body = {
+        status: 1,
+        msg: '删除失败!'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '删除成功!'
+      }
     }
   })
 }

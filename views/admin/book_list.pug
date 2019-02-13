@@ -29,14 +29,46 @@ block body
       table.layui-table#book-list(lay-filter='book-list', lay-skin='line')
 
 block modal
-  #modal-book-detail(style='display: none;')
-    
+  #modal-book-detail(style='display: none; margin: 20px;')
+    .info-box 
+      form.layui-form.layui-form-pane
+        .layui-upload.cover
+            .layui-upload-prev
+              img.layui-upload-img#cover
+              p#upload-text
+            button#btn-modify-cover(type='button') 修改封面
+        input(hidden type='text', name='_id')
+        .layui-form-item
+          label.layui-form-label 小说名称
+          .layui-input-inline
+            input.layui-input(type='text', name='name', lay-verify='required', required, placeholder='请输入小说名称', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 作者
+          .layui-input-inline
+            input.layui-input(type='text', name='author', lay-verify='required', required, placeholder='请输入作者名称', autocomplete='off')
+        .layui-form-item.layui-form-text
+          label.layui-form-label(pane) 小说简介
+          .layui-input-block
+            textarea.layui-textarea(name='description', lay-verify='required', required, placeholder='请输入小说简介', autocomplete='off')
+        .layui-form-item
+          label.layui-form-label 小说更新状态
+          .layui-input-block
+            input(type='radio', name='state', value='连载中', title='连载中')
+            input(type='radio', name='state', value='完本', title='完本')
+        .layui-form-item
+          label.layui-form-label 小说分类
+          .layui-input-block
+            input(type='checkbox', name='classification[]', title='男频', value='男频')
+            input(type='checkbox', name='classification[]', title='女频', value='女频')
+            input(type='checkbox', name='classification[]', title='通用', value='通用')
+        .layui-form-item
+          .layui-input-block
+            button.layui-btn#btn-book-modify(type='button', lay-submit) 修改
 
 block scripts
   script#book-list-toolbar(type='text/html')
     .layui-btn-container
-      a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='detail') 查看
-      a.layui-btn.layui-btn-xs(lay-event='edit') 编辑
+      a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='modify') 查看
       a.layui-btn.layui-btn-normal.layui-btn-xs(lay-event='catalog') 章节目录
       a.layui-btn.layui-btn-danger.layui-btn-xs(lay-event='del') 删除
   script(src='/js/book_list.js')

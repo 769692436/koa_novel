@@ -1,0 +1,50 @@
+extends ./layout/layout
+
+block side_nav
+  .layui-side.layui-bg-black
+    .layui-side-scroll
+      ul.layui-nav.layui-nav-tree(lay-shrink='all')
+        li.layui-nav-item.layui-nav-itemed
+          a(href='javascript:;') 小说管理
+          dl.layui-nav-child
+            dd.layui-this
+              a(href='/admin/book/listPage') 所有小说
+            dd
+              a(href='/admin/book/addPage') 新增小说
+        li.layui-nav-item
+          a(href='javascript:;') 爬取规则管理
+          dl.layui-nav-child
+            dd
+              a(href='/admin/book/rule/listPage') 所有爬取规则
+            dd
+              a(href='/admin/book/rule/addPage') 添加爬取规则
+block body
+  .layui-body
+    div(style='padding: 15px;border-bottom: 1px solid #eee;')
+      span.layui-breadcrumb
+        a(href='javascript:;') 小说管理
+        a(href='javascript:;') 所有小说
+        a(href='javascript:;') 所有章节
+      #section-list-block
+        #section-list-headBar(style='margin: 10px 0;')
+          .layui-form
+            .layui-inline
+              .layui-input-inline(style='margin-right: 10px')
+                select#search-obj(lay-search, name='status', lay-filter='')
+                  option(value='1') 正常的章节
+                  option(value='2') 空缺内容的章节
+              button.layui-btn.layui-btn-sm(lay-event='') 筛选
+        table.layui-table#section-list(lay-filter='section-list', lay-skin='line', lay-data='{id: "searchReload"}')
+
+block modal
+  #modal-section-detail(style='display:none')
+    
+          
+block scripts
+  script#section-list-toolbar(type='text/html')
+    .layui-btn-container
+      a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='detail') 查看
+      a.layui-btn.layui-btn-xs.layui-btn-danger(lay-event='del') 删除
+  
+    
+  script(src='/js/section_list.js')
