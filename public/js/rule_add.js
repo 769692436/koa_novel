@@ -3,7 +3,6 @@ layui.use(['form'], function(){
       $ = layui.$;
 
   form.on('submit', function(data){
-    console.log(123);
     $.ajax({
       url: '/admin/book/rule/add',
       type: 'post',

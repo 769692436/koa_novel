@@ -233,3 +233,20 @@ exports.del = async (ctx) => {
     }
   })
 }
+
+exports.txtImport = async (ctx) => {
+  let file = ctx.request.files.file,
+      data = ctx.request.body;
+  let bookData = await new Promise((res, rej) => {
+    fs.readFile(file.path, (err, data) => {
+      if(err) {
+        rej('');
+      }else{
+        res(data);
+      }
+    });
+  });
+  // let splitReg = new RegExp('/第(零|一|二|三|四|五|六|七|八|九|十|百|千)+章/');
+  let t = bookData.toString().split(/------------/g);
+  console.log(t);
+}

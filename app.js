@@ -23,7 +23,10 @@ app
     .use(logger())
     .use(session(CONFIG, app))
     .use(body({
-      multipart:true
+      multipart:true,
+      jsonLimit: 12 * 1024 * 1024,
+      formLimit: 1* 1024 * 1024,
+      
     }))
     .use(static(join(__dirname, 'public')))
     .use(views(join(__dirname, 'views'), {

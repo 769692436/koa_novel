@@ -65,3 +65,11 @@ html, body{
   color: #fff;
   font-size: 16px;
 }
+
+
+#modal-book-import .layui-form-pane .layui-form-label{
+  width: 200px;
+}
+#modal-book-import .layui-form-pane .layui-input-block{
+  margin-left: 200px;
+}

@@ -37,6 +37,7 @@ router.get('/admin/book/list', admin.isLogin, book.list);
 router.post('/admin/book/cover/modify', admin.isLogin, book.coverModify);
 router.post('/admin/book/modify', admin.isLogin, book.modify);
 router.post('/admin/book/del', admin.isLogin, book.del);
+router.post('/admin/book/importBook', admin.isLogin, book.txtImport);
 //爬取规则相关
 router.post('/admin/book/rule/add', admin.isLogin, rule.add);
 router.post('/admin/book/rule/del', admin.isLogin, rule.del);
@@ -46,4 +47,6 @@ router.post('/admin/book/rule/crawl', admin.isLogin, rule.crawl);
 //小说章节相关
 router.get('/admin/book/section/list/:id', admin.isLogin, section.list);
 router.post('/admin/book/section/del', admin.isLogin, section.del);
+router.post('/admin/book/section/delAll', admin.isLogin, section.delAll);
+router.post('/admin/book/section/modify', admin.isLogin, section.modify);
 module.exports = router;

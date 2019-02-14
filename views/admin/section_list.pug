@@ -26,25 +26,37 @@ block body
         a(href='javascript:;') 所有小说
         a(href='javascript:;') 所有章节
       #section-list-block
-        #section-list-headBar(style='margin: 10px 0;')
-          .layui-form
-            .layui-inline
-              .layui-input-inline(style='margin-right: 10px')
-                select#search-obj(lay-search, name='status', lay-filter='')
-                  option(value='1') 正常的章节
-                  option(value='2') 空缺内容的章节
-              button.layui-btn.layui-btn-sm(lay-event='') 筛选
+        
         table.layui-table#section-list(lay-filter='section-list', lay-skin='line', lay-data='{id: "searchReload"}')
 
 block modal
-  #modal-section-detail(style='display:none')
-    
+  #modal-section-detail(style='display:none; margin: 20px')
+    form.layui-from.layui-form-pane
+      .layui-form-item
+        label.layui-form-label 章节标题
+        .layui-input-block
+          input.layui-input(type='text', name='title')
+      .layui-form-item.layui-form-text
+        label.layui-form-label 章节内容
+        .layui-input-block
+          textarea.layui-textarea#content-edit(name='content', rows='15')
+          
           
 block scripts
   script#section-list-toolbar(type='text/html')
     .layui-btn-container
       a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='detail') 查看
       a.layui-btn.layui-btn-xs.layui-btn-danger(lay-event='del') 删除
-  
+  script#section-list-headBar(type='text/html', style='margin: 10px 0;')
+      .layui-form
+        .layui-inline
+          .layui-input-inline(style='margin-right: 10px')
+            select#search-obj(lay-search, name='status', lay-filter='')
+              option(value='1') 正常的章节
+              option(value='2') 空缺内容的章节
+          button.layui-btn.layui-btn-sm(lay-event='') 筛选
+          button.layui-btn.layui-btn-sm(lay-event='delAll') 删除选中内容
+      
+      
     
   script(src='/js/section_list.js')

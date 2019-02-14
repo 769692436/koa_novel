@@ -39,6 +39,7 @@ layui.use(['table', 'form', 'upload'], function(){
         location.href= '/admin/book/section/listPage/' + obj.data._id;
       }; break;
       case 'del': del($, obj.data); break;
+      case 'import': sectionImport(obj.data); break;
     }
   });
 
@@ -143,7 +144,6 @@ layui.use(['table', 'form', 'upload'], function(){
             classificationNew.push(v.value);
           });
           layer.confirm('确认修改?', function(index) {
-            console.log($('[name=state]:checked').val());
             var updateData = {
               _id: data._id,
               name: name.val(),
@@ -186,5 +186,54 @@ layui.use(['table', 'form', 'upload'], function(){
         });//小说基本信息修改end
       }
     });
+  }
+
+  function sectionImport(data) {
+
+    layer.open({
+      type: 1,
+      title: '导入整本小说',
+      area: '800px',
+      content: $('#modal-book-import'),
+      btn: ['取消'],
+      btn1: function(index, layero) {
+        layer.close(index);
+      },
+      success: function(layero, index) {
+        var book = $('[name=book]'),
+            splitReg = $('[name=splitReg]'),
+            titleReg = $('[name=titleReg]'),
+            contentReg = $('[name=contentReg]');
+        book.val(data.name);
+        $('#upload-book-txt').on('click', function(){
+          $('#select-book-txt').click();
+        });
+        form.on('submit(book-import)', function(data) {
+          var fd = new FormData();
+          console.log(data.field);
+          for(i in data.field){
+            console.log();
+            fd.append(i, data.field[i]);
+          }
+          fd.append('file', $('#select-book-txt')[0].files[0]);
+          $.ajax({
+            url: '/admin/book/importBook',
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: fd,
+            beforeSend: function(xhr) {
+              layer.load();
+            },
+            success: function(res) {
+
+            },
+            error: function(err) {
+
+            }
+          })
+        });
+      }
+    })
   }
 });

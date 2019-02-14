@@ -64,12 +64,44 @@ block modal
         .layui-form-item
           .layui-input-block
             button.layui-btn#btn-book-modify(type='button', lay-submit) 修改
-
+  #modal-book-import(style='display: none; margin: 20px;')
+    form.layui-form.layui-form-pane(enctype='multipart/form-data')
+      .layui-form-item
+        label.layui-form-label 小说名称
+        .layui-input-inline
+          input.layui-input(type='text', name='book', readonly)
+      .layui-form-item 
+        label.layui-form-label 分割章节正则表达式
+        .layui-input-block
+          input.layui-input(type='text', name='splitReg', lay-verify='required', required, autocomplete='off')
+      .layui-form-item
+        label.layui-form-label 提取每章标题正则表达式
+        .layui-input-block
+          input.layui-input(type='text', name='titleReg', lay-verify='required', required)
+      .layui-form-item 
+        label.layui-form-label 提取每章内容的正则表达式
+        .layui-input-block
+          input.layui-input(name='contentReg', type='text', lay-verify='required', required)
+      .layui-form-item
+        label.layui-form-label 提取每章章节数的正则表达式
+        .layui-input-block
+          input.layui-input(type='text', name='sectionNumReg', lay-verify='required', required)      
+      .layui-form-item 
+        label.layui-form-label 上传txt文件
+        .layui-input-inline
+          button.layui-btn#upload-book-txt(type='button')
+            i.layui-icon &#xe67c;
+            | 上传txt小说文件
+          input#select-book-txt(type='file', style='display: none', lay-verify='required', required)
+      .layui-form-item 
+        .layui-input-block
+          button.layui-btn.layui-btn-normal#btn-book-import(type='button', lay-submit, lay-filter='book-import') 导入
 block scripts
   script#book-list-toolbar(type='text/html')
     .layui-btn-container
       a.layui-btn.layui-btn-primary.layui-btn-xs(lay-event='modify') 查看
       a.layui-btn.layui-btn-normal.layui-btn-xs(lay-event='catalog') 章节目录
+      a.layui-btn.layui-btn-xs(lay-event='import') 导入
       a.layui-btn.layui-btn-danger.layui-btn-xs(lay-event='del') 删除
   script(src='/js/book_list.js')
   

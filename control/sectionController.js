@@ -70,3 +70,39 @@ exports.del = async (ctx) => {
     }
   });
 }
+
+exports.delAll = async (ctx) => {
+  let data = ctx.request.body._ids;
+  await Section.deleteMany({_id: {$in: data}}, err => {
+    if(err){
+      console.log(err);
+      ctx.body = {
+        status: 1,
+        msg: '删除失败!'
+      }
+    }else{
+      ctx.body = {
+        status: 0,
+        msg: '删除成功!'
+      }
+    }
+
+  });
+}
+
+exports.modify = async (ctx) => {
+  let {_id, title, content} = ctx.request.body;
+  await Section.updateOne({_id}, {title, content}, err => {
+    if(err){
+      ctx.body = {
+        status: 1,
+        msg: '修改失败!'
+      }
+    }else{
+      ctx.body = {
+        status: 1,
+        msg: '修改成功!'
+      }
+    }
+  });
+}
