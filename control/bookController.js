@@ -3,7 +3,12 @@ const fs = require('fs');
 
 const Book = require('../module/bookModel');
 const Counter = require('../module/counterModel');
+const Section = require('../module/sectionModel');
+
+
 const dirExists = require('../utils/dirExists');
+const removeNaN = require('../utils/removeNaN');
+const chinese2Int = require('../utils/chinese2Int');
 
 
 
@@ -233,7 +238,11 @@ exports.del = async (ctx) => {
     }
   })
 }
+/*
+  分割章节正则示例 ： 第(((零|一|二|三|四|五|六|七|八|九|十|百|千)+)|([0-9]+))章
+  提取每章章节数的正则表达式： ((零|一|二|三|四|五|六|七|八|九|十|百|千)+)|([0-9]+)
 
+*/
 exports.txtImport = async (ctx) => {
   let file = ctx.request.files.file,
       data = ctx.request.body;
@@ -246,7 +255,60 @@ exports.txtImport = async (ctx) => {
       }
     });
   });
-  // let splitReg = new RegExp('/第(零|一|二|三|四|五|六|七|八|九|十|百|千)+章/');
-  let t = bookData.toString().split(/------------/g);
-  console.log(t);
+  let regData = {
+    splitReg: new RegExp(data.splitReg, 'g'),
+    titleReg: new RegExp(data.titleReg, 'g'),
+    contentReg: new RegExp(data.contentReg, 'g'),
+    sectionNumReg: new RegExp(data.sectionNumReg),
+    book: data.book
+  }
+
+  saveEachSection(bookData.toString(), regData);
+}
+
+const saveEachSection = async (bookString, regData) => {
+  let updateData = [],
+      sectionNums = [];
+  let t =   bookString.match(regData.splitReg);
+  for(let i = 0; i < t.length - 1; i++){
+    let s, e;
+    let cReg = new RegExp(t[i], 'g'),
+        nReg = new RegExp(t[i+1], 'g');
+    if(cReg.test(bookString) === true) {
+      // console.log(cReg.lastIndex);
+      s = cReg.lastIndex - t[i].length;
+    }
+    if(nReg.test(bookString) === true) {
+      e = nReg.lastIndex - t[i+1].length;
+    }
+
+    updateData.push({
+      title: bookString.substring(s, e).split('\n')[0],
+      content: bookString.substring(s, e),
+      sectionNum: getSectionNum(regData.sectionNumReg.exec(t[i])[0]),
+      status: 3, // 导入的章节
+      book: regData.book,
+      originUrl: ''
+    });
+    sectionNums.push(getSectionNum(regData.sectionNumReg.exec(t[i])[0]));
+  }
+
+  let updateStatus = await Section.updateMany({sectionNum: {$in: sectionNums}}, updateData, {upsert: 1}, err => {
+    if(err) {
+      return false;
+    }else{
+      return true;
+    }
+  });
+  console.log(updateData.length, updateStatus);
+}
+
+let getSectionNum  = (flag) => {
+  let secNum = removeNaN(flag);
+  if(isNaN(parseInt(secNum))){
+    secNum = chinese2Int(secNum);
+  }else{
+    secNum = parseInt(secNum);
+  }
+  return secNum;
 }

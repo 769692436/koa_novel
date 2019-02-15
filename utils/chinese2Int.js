@@ -47,7 +47,7 @@ let chinese2Int = (str) => {
       number = 0;
     }
   }
-  return rtn + section;
+  return parseInt(rtn + section);
 }
 
 module.exports = chinese2Int;
