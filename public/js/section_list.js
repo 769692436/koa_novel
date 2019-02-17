@@ -39,6 +39,9 @@ layui.use(['table', 'layedit'], function(){
       var data = checkStatus.data;
       data = data.map(data => data._id);
       delAll($, data);
+    }else if(obj.event === 'getMiss'){
+      var book = location.href.split('/').pop();
+      getMiss($, book);
     }
   });
   //监听工具条事件
@@ -145,4 +148,32 @@ function modify($, layedit, data) {
       layedit.setContent(editIndex, data.content);
     }
   });
+}
+
+function getMiss($, book) {
+  $.ajax({
+    url: '/admin/book/section/getMiss',
+    type: 'post',
+    data: {
+      book: book
+    },
+    beforeSend: function(xhr) {
+      layer.load();
+    },
+    success: function(res) {
+      layer.closeAll('loading');
+      console.log(res.list);
+      layer.open({
+        type: 0,
+        title: '缺失的章节',
+        content: res.list.toString(),
+        btn: '关闭',
+        btnAlign: 'c'
+      });
+    },
+    error: function(err) {
+      console.log(err);
+      layer.msg('查询失败!');
+    }
+  })
 }

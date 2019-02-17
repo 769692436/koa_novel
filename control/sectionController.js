@@ -1,4 +1,8 @@
+const Mongoose = require('mongoose');
+const ObjectId = Mongoose.Types.ObjectId;
+
 const Section = require('../module/sectionModel');
+const Book = require('../module/bookModel');
 
 exports.listPage = async (ctx) => {
   await ctx.render('admin/section_list', {
@@ -30,6 +34,7 @@ exports.list = async (ctx) => {
   }
   let sectionList = await Section
         .find({book: bookId})
+        .sort({sectionNum: 1})
         .skip((page - 1) * limit)
         .limit(limit)
         .populate('book', 'name')
@@ -105,4 +110,42 @@ exports.modify = async (ctx) => {
       }
     }
   });
+}
+
+exports.getMissSection = async (ctx) => {
+  let {book} = ctx.request.body;
+  let sectionNums = await Section.aggregate([
+    {$match: {book: ObjectId(book)}},
+    {$sort: {sectionNum: 1}},
+    {$project: {_id: 0, sectionNum: 1}}
+  ]).then(data => {
+    return data;
+  }, err => {
+    console.log(err);
+    return [];
+  });
+  sectionNums = sectionNums.map(item => (item.sectionNum));
+  let n = await Book.findById(book).then(data => (data.currentLength));
+  let missSections = [],
+      j = 1;
+  for(let i = 0; i < sectionNums.length; i++){
+    // console.log(sectionNums[i].sectionNum);
+    let x = sectionNums[i] - i;
+    let xx = i + j;
+    while(x != j){
+      missSections.push(xx);
+      xx++;
+      j++
+    }
+  }
+  missSections = missSections.filter(item => {
+    if(item <= n){
+      return item;
+    }
+  });
+  ctx.body = {
+    status: 0,
+    list: missSections
+  }
+  // console.log(missSections);
 }

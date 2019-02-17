@@ -32,7 +32,6 @@ layui.use(['table', 'form', 'upload'], function(){
   });
   table.on('tool(book-list)', function(obj) {
     var layEvent = obj.event;
-    console.log(layEvent);
     switch(layEvent){
       case 'modify': modify($, form, obj.data); break;
       case 'catalog': {
@@ -208,13 +207,13 @@ layui.use(['table', 'form', 'upload'], function(){
         $('#upload-book-txt').on('click', function(){
           $('#select-book-txt').click();
         });
-        form.on('submit(book-import)', function(data) {
+        form.on('submit(book-import)', function(formdata) {
           var fd = new FormData();
           console.log(data.field);
-          for(i in data.field){
-            console.log();
-            fd.append(i, data.field[i]);
+          for(i in formdata.field){
+            fd.append(i, formdata.field[i]);
           }
+          fd.set('book', data._id);
           fd.append('file', $('#select-book-txt')[0].files[0]);
           $.ajax({
             url: '/admin/book/importBook',
@@ -226,10 +225,16 @@ layui.use(['table', 'form', 'upload'], function(){
               layer.load();
             },
             success: function(res) {
-
+              layer.msg(res.msg);
+              setTimeout(function(){
+                location.reload();
+              }, 1500);
             },
             error: function(err) {
-
+              layer.msg('导入失败，请重试!');
+              setTimeout(function(){
+                location.reload();
+              }, 1500);
             }
           })
         });

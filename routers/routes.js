@@ -49,4 +49,7 @@ router.get('/admin/book/section/list/:id', admin.isLogin, section.list);
 router.post('/admin/book/section/del', admin.isLogin, section.del);
 router.post('/admin/book/section/delAll', admin.isLogin, section.delAll);
 router.post('/admin/book/section/modify', admin.isLogin, section.modify);
+
+router.post('/admin/book/section/getMiss', admin.isLogin, section.getMissSection);
+
 module.exports = router;
