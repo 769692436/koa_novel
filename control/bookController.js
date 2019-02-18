@@ -269,8 +269,8 @@ exports.txtImport = async (ctx) => {
       return item;
     }
   });
-  console.log(successList.length);
-  await Book.updateOne({_id: data.book}, {currentLength: successList.length}, (err, rs) => {
+  console.log(successList[successList.length - 1].sectionNum);
+  await Book.updateOne({_id: data.book}, {currentLength: successList[successList.length - 1].sectionNum}, (err, rs) => {
     console.log(err, rs);
   });
   ctx.body = {
