@@ -11,7 +11,7 @@ const importBook = async (bookString, regData) => {
   let sectionList = await getSectionList(bookString, regData);
   console.log(sectionList.length);
   let saveStatusList = await saveBookSection(sectionList);
-  console.log(saveStatusList);
+  // console.log(saveStatusList);
   return saveStatusList;
 }
 
@@ -114,7 +114,7 @@ const saveEachSection = async (ele) => {
           });
         });
   }else{
-    ep.emit('saveSection',{})
+    ep.emit('saveSection',{status: 2, sectionNum: 0})
   }
 
 }

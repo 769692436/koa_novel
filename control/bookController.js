@@ -266,11 +266,17 @@ exports.txtImport = async (ctx) => {
   let successList = await importBook(bookData.toString(), regData);
   successList = successList.map(item => {
     if(item.status == 0){
-      return item;
+      if(typeof(item.sectionNum) == undefined){
+        console.log(1);
+      }
+      return item.sectionNum;
     }
   });
-  console.log(successList[successList.length - 1].sectionNum);
-  await Book.updateOne({_id: data.book}, {currentLength: successList[successList.length - 1].sectionNum}, (err, rs) => {
+  console.log(successList, "123");
+  successList = successList.sort((a, b) => {
+    return a - b;
+  })
+  await Book.updateOne({_id: data.book}, {currentLength: successList[successList.length - 1]}, (err, rs) => {
     console.log(err, rs);
   });
   ctx.body = {
