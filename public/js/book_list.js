@@ -78,6 +78,7 @@ layui.use(['table', 'form', 'upload'], function(){
       },
       success: function(layero, index) {
         var name = layero.find('[name=name]'),
+            currentLength = layero.find('[name=currentLength]'),
             author = layero.find('[name=author]'),
             classification = layero.find('[name="classification[]"]'),
             description = layero.find('[name=description]'),
@@ -85,6 +86,7 @@ layui.use(['table', 'form', 'upload'], function(){
             cover = layero.find('#cover'),
             mIndex = index;
         cover.attr('src',  data.cover);
+        currentLength.val(data.currentLength);
         name.val(data.name);
         author.val(data.author);
         description.val(data.description);
@@ -145,6 +147,7 @@ layui.use(['table', 'form', 'upload'], function(){
           layer.confirm('确认修改?', function(index) {
             var updateData = {
               _id: data._id,
+              currentLength: currentLength.val(),
               name: name.val(),
               author: author.val(),
               description: description.val(),

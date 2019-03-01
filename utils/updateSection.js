@@ -142,7 +142,7 @@ let getSectionData = (rule, index, ele) => {
   }
   agent
       .get(ele.url)
-      .proxy() // 代理ip
+      // .proxy(proxyIP) // 代理ip
       .set({'User-Agent': userAgent})
       .buffer(true)
       .charset(rule.charset)
